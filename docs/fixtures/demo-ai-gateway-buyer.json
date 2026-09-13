@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "purpose": "OrcaRouter顧客（開発者・スタートアップ）に同じ型が通用することの補助デモ。主デモには使わない。公開情報レベルの検討質問のみ。製品スペックを発明しない。",
+    "gold": {
+      "shouldRankHigh": [
+        "既存のOpenAIキーを持ったまま使えるか（BYOK）",
+        "トークンにマークアップが乗るか",
+        "変な入力や個人情報をモデルに流さずに止められるか"
+      ],
+      "shouldNotRank": [
+        "生成AIとは何か",
+        "LLMの歴史"
+      ]
+    }
+  },
+  "company": {
+    "name": "例: 適応型LLMゲートウェイ（カテゴリ例。特定社の公式主張ではない）",
+    "url": "https://example-llm-gateway.example.jp/",
+    "industry": "AI推論インフラ",
+    "notes": "検討者はスタートアップCTOとSRE。HPは機能キャッチコピーが中心。"
+  },
+  "sitePages": [
+    {
+      "url": "https://example-llm-gateway.example.jp/",
+      "title": "トップ",
+      "text": "200以上のモデルをひとつのAPIで。コストを最適化。今すぐ始める。"
+    },
+    {
+      "url": "https://example-llm-gateway.example.jp/docs",
+      "title": "Docs",
+      "text": "OpenAI互換のエンドポイントにAPIキーをセットして呼び出します。モデル名を指定するか、自動選択を使います。"
+    }
+  ],
+  "realQuestions": [
+    {
+      "text": "今契約しているOpenAIのキーを、そのままゲートウェイ経由で使えますか。請求先はどっちになりますか。",
+      "source": "sales"
+    },
+    {
+      "text": "トークン単価に御社のマージンは乗りますか。乗らないなら何で収益を得ていますか。",
+      "source": "sales"
+    },
+    {
+      "text": "本番でユーザーが個人情報を貼ったとき、モデルに送る前に止められますか。止まったリクエストは課金されますか。",
+      "source": "inquiry"
+    },
+    {
+      "text": "自動ルーティングでどのモデルが選ばれたか、ログで追えますか。",
+      "source": "sales"
+    }
+  ],
+  "capabilities": {
+    "can": "BYOK。トークンのマークアップなし（プラットフォーム定額）。個人情報・不許可コンテンツのガードレール。ブロック時はモデルに送らず課金しない、という製品カテゴリ上の売りがある。OpenAI互換。選択モデルの可視化。",
+    "cannot": "このfixtureでは具体的なSLA数値・認定名・日本データ所在を断言しない。入力に無い数字は出さない。",
+    "evidence": "公開ブログ相当: BYOK、$0/token markup、guardrails catch PII before the model、blocked request is never charged、glass-box receipt。"
+  }
+}

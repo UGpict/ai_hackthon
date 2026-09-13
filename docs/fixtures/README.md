@@ -1,5 +1,7 @@
 # 評価セットに対してツールが出すべきこと
 
+主デモは `demo-analysis-lab.json`（企画の原点）。協賛合わせは `demo-b2b-ads-client.json`。OrcaRouter顧客への汎用性は `demo-ai-gateway-buyer.json`（本番の主デモには使わない）。
+
 `demo-analysis-lab.json` を流したとき、人間がこれを満たせば合格。モデルの文言一致は不要。
 
 ## 上位に来るべき
@@ -36,3 +38,11 @@
 
 - `realQuestions` を2件に削る → `blocked.too_few_questions` と聞き方リスト
 - `capabilities.evidence` と `can` を空 → 根拠なしで推薦しない
+
+## demo-b2b-ads-client.json
+
+広告は回している店舗向けSaaS。上位は「既存レジ残せるか」「権限を本部だけに」「店舗から電話サポート」。落ちるのは「DXとは」と、セキュリティ一般論（サイトに既にある）。`paid_search` の「DX 推進 方法」は実問だが商談近くないので上げない。POS連携不可のマイナーレジを「できる」と書かない。
+
+## demo-ai-gateway-buyer.json
+
+補助。BYOK・マークアップ・ガードレール課金が上がる。「生成AIとは」は落ちる。入力に無いSLA数値を発明しない。OrcaRouter公式の採点には使わない。
