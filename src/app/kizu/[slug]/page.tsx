@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { agents } from "@/lib/agents";
 import { getPain, getRelatedPains, pains } from "@/lib/pains";
 import { SITE } from "@/lib/site";
 
@@ -218,6 +220,34 @@ export default async function PainPage({ params }: { params: Params }) {
               </ul>
             </section>
           ) : null}
+
+          <section className="mt-14 border border-line bg-ink-soft/40 p-5">
+            <p className="text-xs uppercase tracking-[0.25em] text-paper-dim">
+              Maintained by crew
+            </p>
+            <p className="mt-2 text-sm leading-7 text-paper-dim">
+              このページは三人の型で保たれている。意図を拾い、事実を削り、SEOで閉じる。
+            </p>
+            <ul className="mt-4 flex flex-wrap gap-4">
+              {agents.map((agent) => (
+                <li key={agent.id} className="flex items-center gap-2">
+                  <Image
+                    src={agent.portrait}
+                    alt={agent.name}
+                    width={36}
+                    height={36}
+                    className="h-9 w-9 border border-line object-cover"
+                  />
+                  <span className="text-sm" style={{ color: agent.color }}>
+                    {agent.name}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <Link href="/ops" className="mt-5 inline-block text-sm text-scar hover:underline">
+              稼働室で同じ型を回す →
+            </Link>
+          </section>
         </main>
         <SiteFooter />
       </div>
