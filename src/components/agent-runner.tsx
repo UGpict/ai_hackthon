@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   buildAgentRun,
   getAgent,
@@ -13,48 +13,68 @@ import { LiveOpsFeed } from "@/components/agent-crew";
 
 type Phase = "idle" | "running" | "done";
 
+function sleep(ms: number, signal: AbortSignal) {
+  return new Promise<void>((resolve, reject) => {
+    if (signal.aborted) {
+      reject(new DOMException("Aborted", "AbortError"));
+      return;
+    }
+    const timer = window.setTimeout(() => resolve(), ms);
+    signal.addEventListener(
+      "abort",
+      () => {
+        window.clearTimeout(timer);
+        reject(new DOMException("Aborted", "AbortError"));
+      },
+      { once: true },
+    );
+  });
+}
+
 export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
   const [query, setQuery] = useState(initialQuery);
   const [phase, setPhase] = useState<Phase>("idle");
-  const [stepIndex, setStepIndex] = useState(-1);
+  const [activeStep, setActiveStep] = useState<AgentStep | null>(null);
   const [log, setLog] = useState<AgentStep[]>([]);
   const [draft, setDraft] = useState<ScarDraft | null>(null);
-  const [pending, startTransition] = useTransition();
-
-  const plan = useMemo(() => buildAgentRun(query), [query]);
+  const runRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    if (phase !== "running") return;
-    if (stepIndex >= plan.steps.length) {
+    return () => runRef.current?.abort();
+  }, []);
+
+  async function startRun() {
+    const q = query.trim();
+    if (!q || phase === "running") return;
+
+    runRef.current?.abort();
+    const controller = new AbortController();
+    runRef.current = controller;
+
+    const { steps, draft: nextDraft } = buildAgentRun(q);
+    setLog([]);
+    setDraft(null);
+    setActiveStep(null);
+    setPhase("running");
+
+    try {
+      for (const step of steps) {
+        setActiveStep(step);
+        await sleep(step.ms, controller.signal);
+        setLog((prev) => [...prev, step]);
+      }
+      setActiveStep(null);
+      setDraft(nextDraft);
       setPhase("done");
-      setDraft(plan.draft);
-      return;
+    } catch {
+      if (!controller.signal.aborted) {
+        setPhase("idle");
+        setActiveStep(null);
+      }
     }
-
-    const step = plan.steps[stepIndex];
-    const timer = window.setTimeout(() => {
-      setLog((prev) => [...prev, step]);
-      setStepIndex((i) => i + 1);
-    }, step?.ms ?? 400);
-
-    return () => window.clearTimeout(timer);
-  }, [phase, stepIndex, plan]);
-
-  function startRun(e: React.FormEvent) {
-    e.preventDefault();
-    startTransition(() => {
-      setLog([]);
-      setDraft(null);
-      setStepIndex(0);
-      setPhase("running");
-    });
   }
 
-  const active =
-    phase === "running" && stepIndex >= 0 && stepIndex < plan.steps.length
-      ? plan.steps[stepIndex]
-      : null;
-  const activeAgent = active ? getAgent(active.agentId) : null;
+  const activeAgent = activeStep ? getAgent(activeStep.agentId) : null;
 
   const feedExtra =
     phase !== "idle"
@@ -72,22 +92,30 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
   return (
     <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
       <div>
-        <form onSubmit={startRun} className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                void startRun();
+              }
+            }}
             placeholder="例）転職して後悔した"
             className="w-full border border-line bg-ink/60 px-4 py-3 text-paper outline-none placeholder:text-paper-dim/60 focus:border-scar"
             disabled={phase === "running"}
+            aria-label="痛い検索語"
           />
           <button
-            type="submit"
-            className="cta shrink-0 disabled:opacity-60"
-            disabled={phase === "running" || pending || !query.trim()}
+            type="button"
+            onClick={() => void startRun()}
+            className="cta shrink-0 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={phase === "running" || !query.trim()}
           >
             {phase === "running" ? "ハック中…" : "この語のSERPをハック"}
           </button>
-        </form>
+        </div>
 
         <p className="mt-3 text-sm text-paper-dim">
           サグリが意図を拾い、ケズリが削り、トジがSEOで閉じる。入力した痛い検索語のSERPだけをハックする。
@@ -101,7 +129,7 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
             </p>
           ) : null}
 
-          {activeAgent && active ? (
+          {activeAgent && activeStep ? (
             <div className="flex items-start gap-4">
               <div className="relative">
                 <Image
@@ -121,10 +149,10 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
                   {activeAgent.name} が作業中
                 </p>
                 <p className="mt-1 font-[family-name:var(--font-display)] text-xl">
-                  {active.label}
+                  {activeStep.label}
                 </p>
                 <p className="mt-2 text-sm leading-7 text-paper-dim">
-                  {active.detail}
+                  {activeStep.detail}
                 </p>
               </div>
             </div>
@@ -203,10 +231,7 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
                   <li key={note}>· {note}</li>
                 ))}
               </ul>
-              <Link
-                href={`/kizu`}
-                className="cta mt-6 inline-flex"
-              >
+              <Link href="/kizu" className="cta mt-6 inline-flex">
                 既存のきずあと索引へ
               </Link>
             </section>

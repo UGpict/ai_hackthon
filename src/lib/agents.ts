@@ -81,37 +81,37 @@ export function buildAgentRun(query: string): {
       agentId: "saguri",
       label: "検索意図を分解",
       detail: `「${q}」の裏にある“いま痛い理由”を切り出す`,
-      ms: 700,
+      ms: 450,
     },
     {
       agentId: "saguri",
       label: "共起クエリを拾う",
       detail: "People Also Ask / 関連検索から入口語を3つ確保",
-      ms: 900,
+      ms: 500,
     },
     {
       agentId: "kezuri",
       label: "原体験を削る",
       detail: "感情の塊を、先に痛い事実4行に圧縮",
-      ms: 1100,
+      ms: 650,
     },
     {
       agentId: "kezuri",
       label: "分岐点を残す",
       detail: "戻りたかった選択だけを3本に残す",
-      ms: 800,
+      ms: 450,
     },
     {
       agentId: "toji",
       label: "今夜の一手を固定",
       detail: "検索直後に動ける行動を3つに縫う",
-      ms: 700,
+      ms: 400,
     },
     {
       agentId: "toji",
       label: "SEOで閉じる",
       detail: "H1一致・FAQ候補・内部リンク案を添える",
-      ms: 900,
+      ms: 500,
     },
   ];
 
