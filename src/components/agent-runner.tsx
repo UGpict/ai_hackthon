@@ -74,7 +74,7 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
     const controller = new AbortController();
     runRef.current = controller;
 
-    const { steps, draft: nextDraft } = buildAgentRun(q);
+    const { steps, draft: nextDraft, highlightIds } = buildAgentRun(q);
     setLog([]);
     setDraft(null);
     setActiveStep(null);
@@ -94,6 +94,17 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
         await sleep(step.ms, controller.signal);
         setLog((prev) => [...prev, step]);
       }
+
+      // Final light-up: keep only the winning cells glowing.
+      const winners = new Set(highlightIds);
+      board = board.map((cell) => {
+        if (winners.has(cell.id)) return { ...cell, state: "lit" as const };
+        if (cell.state === "incoming" || cell.state === "candidate") {
+          return { ...cell, state: "dim" as const };
+        }
+        return cell;
+      });
+      setCells(board.map((c) => ({ ...c })));
       setActiveStep(null);
       setDraft(nextDraft);
       setPhase("done");
