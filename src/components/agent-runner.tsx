@@ -78,14 +78,18 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
     setLog([]);
     setDraft(null);
     setActiveStep(null);
-    setCells(initialHoneycomb(q));
+
+    // Keep a local board so React batching can't drop honeycomb updates.
+    let board = initialHoneycomb(q);
+    setCells(board);
     setPhase("running");
 
     try {
       for (const step of steps) {
         setActiveStep(step);
         if (step.cells?.length) {
-          setCells((prev) => applyCellUpdates(prev, step.cells!));
+          board = applyCellUpdates(board, step.cells);
+          setCells(board.map((c) => ({ ...c })));
         }
         await sleep(step.ms, controller.signal);
         setLog((prev) => [...prev, step]);
