@@ -193,3 +193,46 @@ a {
   border-color: color-mix(in oklab, var(--scar) 60%, white);
   color: white;
 }
+
+@keyframes agent-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+}
+
+.agent-pulse {
+  animation: agent-pulse 1.4s ease-in-out infinite;
+}
+
+.agent-card::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--scar) 55%, white),
+    transparent
+  );
+  transform: scaleX(0.2);
+  animation: agent-scan 3.6s ease-in-out infinite;
+}
+
+@keyframes agent-scan {
+  0%,
+  100% {
+    transform: scaleX(0.15);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
