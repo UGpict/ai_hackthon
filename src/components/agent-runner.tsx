@@ -85,12 +85,12 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
             className="cta shrink-0 disabled:opacity-60"
             disabled={phase === "running" || pending || !query.trim()}
           >
-            {phase === "running" ? "稼働中…" : "エージェントを動かす"}
+            {phase === "running" ? "ハック中…" : "この語のSERPをハック"}
           </button>
         </form>
 
         <p className="mt-3 text-sm text-paper-dim">
-          サグリが意図を拾い、ケズリが削り、トジがSEOで閉じる。あなたの痛い検索語のために働く様子が見える。
+          サグリが意図を拾い、ケズリが削り、トジがSEOで閉じる。入力した痛い検索語のSERPだけをハックする。
         </p>
 
         <div className="mt-8 min-h-[12rem] border border-line bg-ink-soft/40 p-5">

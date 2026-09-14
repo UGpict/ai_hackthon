@@ -15,13 +15,13 @@ export function SiteHeader() {
           索引
         </Link>
         <Link href="/ops" className="transition-colors hover:text-scar">
-          稼働室
+          ハック室
         </Link>
         <Link
-          href="/#crew"
+          href="/#hack"
           className="hidden transition-colors hover:text-scar sm:inline"
         >
-          三人
+          強み
         </Link>
       </nav>
     </header>
@@ -40,7 +40,7 @@ export function SiteFooter() {
         </div>
         <div className="flex gap-4">
           <Link href="/ops" className="hover:text-scar">
-            稼働室
+            ハック室
           </Link>
           <p>© {new Date().getFullYear()} {SITE.nameEn}</p>
         </div>

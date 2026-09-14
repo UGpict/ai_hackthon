@@ -226,7 +226,7 @@ export default async function PainPage({ params }: { params: Params }) {
               Maintained by crew
             </p>
             <p className="mt-2 text-sm leading-7 text-paper-dim">
-              このページは三人の型で保たれている。意図を拾い、事実を削り、SEOで閉じる。
+              このページは Pain SERP ハックの型で保たれている。意図を拾い、事実を削り、SEOで閉じる——それ以外はやらない。
             </p>
             <ul className="mt-4 flex flex-wrap gap-4">
               {agents.map((agent) => (
@@ -245,7 +245,7 @@ export default async function PainPage({ params }: { params: Params }) {
               ))}
             </ul>
             <Link href="/ops" className="mt-5 inline-block text-sm text-scar hover:underline">
-              稼働室で同じ型を回す →
+              ハック室で同じ型を回す →
             </Link>
           </section>
         </main>

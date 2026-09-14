@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { AgentCrewStrip } from "@/components/agent-crew";
 import { AgentRunner } from "@/components/agent-runner";
+import { SerpHackMap } from "@/components/hack-wedge";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { agents } from "@/lib/agents";
+import { HACK } from "@/lib/hack";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "エージェント稼働室",
+  title: "SEOハック室",
   description:
-    "サグリ・ケズリ・トジが、痛い検索語のSEOページをあなたの代わりに掘り、削り、閉じる。働いてくれてる感を可視化するオペ室。",
+    "痛い検索語だけを対象に、サグリ・ケズリ・トジがSERPを掘り・削り・閉じる。業務改善ではなく、Pain SERPハックの起動室。",
   alternates: {
     canonical: `${SITE.url}/ops`,
   },
@@ -19,18 +21,22 @@ export default function OpsPage() {
     <div className="hero-wash relative flex min-h-full flex-1 flex-col">
       <SiteHeader />
       <main className="relative z-10 mx-auto w-full max-w-6xl flex-1 px-5 py-12 sm:px-10">
-        <p className="text-xs uppercase tracking-[0.3em] text-scar">Ops</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-scar">Hack console</p>
         <h1 className="mt-4 font-[family-name:var(--font-display)] text-4xl sm:text-5xl">
-          エージェント稼働室
+          SEOハック室
         </h1>
         <p className="mt-4 max-w-2xl text-paper-dim leading-relaxed">
-          きずあとの強みは、痛いに特化したSEOを、キャラ付きエージェントが止めずに回すこと。
-          業務改善ではなく、検索結果の一点突破をハックする。
+          {HACK.oneLiner}
+          ここは相談室でも編集部でもない。痛いクエリを投げて、SERPを奪う装置。
         </p>
+
+        <section className="mt-10">
+          <SerpHackMap />
+        </section>
 
         <section className="mt-12">
           <h2 className="mb-5 font-[family-name:var(--font-display)] text-2xl">
-            いま、あなたのために働いてる三人
+            このハックを回す三人
           </h2>
           <AgentCrewStrip />
           <ul className="mt-6 grid gap-3 text-sm text-paper-dim sm:grid-cols-3">
@@ -44,10 +50,10 @@ export default function OpsPage() {
 
         <section className="mt-16 border-t border-line pt-12">
           <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl">
-            痛い検索語を投げて、働かせる
+            痛い検索語を入れて、奪いにいく
           </h2>
           <p className="mt-3 max-w-2xl text-paper-dim">
-            入力した語のために、三人の手が順番に動く。成果はきずあと下書き。
+            入力した語以外は見ない。三人はその語のSERP入口だけを掘り、削り、閉じる。
           </p>
           <div className="mt-8">
             <AgentRunner initialQuery="転職して後悔した" />
