@@ -121,50 +121,48 @@ export function buildAgentRun(
 } {
   const q = query.trim() || approved[0]?.phrase || "転職して後悔した";
   const slug = slugify(q);
-  const extras = approved.slice(0, 4);
 
   const steps: AgentStep[] = [
     {
       agentId: "mitsu",
-      label: "仕事ログから蜜を拾う",
-      detail: `採用された「${q}」をハニカムへ搬入`,
+      label: "痛いSERPを偵察",
+      detail: `「${q}」の検索意図を蜜としてロックオン`,
       ms: 350,
       cells: [
         { id: "c0", label: q, state: "incoming" },
-        ...extras.slice(1, 3).map((e, i) => ({
-          id: `c${i + 1}`,
-          label: e.phrase.slice(0, 18),
-          state: "incoming" as const,
-        })),
+        { id: "c1", label: `${q.slice(0, 10)} サイン`, state: "incoming" },
+        { id: "c2", label: `${q.slice(0, 10)} 対処`, state: "incoming" },
       ],
     },
     {
       agentId: "mitsu",
-      label: "出典付きでセルに載せる",
-      detail: "出所のない蜜は運ばない",
+      label: "競合枠をハニカムへ運ぶ",
+      detail: "まとめ記事・掲示板・一般論の位置をセル化",
       ms: 400,
       cells: [
         { id: "c0", state: "candidate" },
         { id: "c1", state: "candidate" },
         { id: "c2", state: "candidate" },
-        { id: "c3", label: extras[3]?.phrase.slice(0, 18) ?? "関連の痛み", state: "incoming" },
+        { id: "c3", label: "まとめ記事枠", state: "incoming" },
+        { id: "c4", label: "掲示板枠", state: "incoming" },
       ],
     },
     {
       agentId: "hani",
-      label: "拒否ルールで落とす",
-      detail: "一般論・比較・事典系はコードで dim",
+      label: "一般論を落とす",
+      detail: "比較・事典・精神論は dim。痛い入口だけ残す",
       ms: 450,
       cells: [
         { id: "c5", label: "一般論", state: "dim" },
         { id: "c6", label: "比較検討", state: "dim" },
-        { id: "c3", state: "candidate" },
+        { id: "c3", state: "dim" },
+        { id: "c4", state: "candidate" },
       ],
     },
     {
       agentId: "hani",
-      label: "事実に煮詰める",
-      detail: "精神論を捨て、分岐と今夜の一手だけ残す",
+      label: "占領用の中身を煮詰める",
+      detail: "先に痛い事実と今夜の一手に濃縮",
       ms: 450,
       cells: [
         { id: "c7", label: "今夜の一手", state: "candidate" },
@@ -174,8 +172,8 @@ export function buildAgentRun(
     },
     {
       agentId: "comu",
-      label: "人が採用したセルだけ光らせる",
-      detail: "自動全採用はしない。承認済みが lit",
+      label: "#1枠を光らせる",
+      detail: "勝ち筋のセルだけ lit。ここが占領ポイント",
       ms: 400,
       cells: [
         { id: "c0", state: "lit" },
@@ -186,13 +184,13 @@ export function buildAgentRun(
     },
     {
       agentId: "comu",
-      label: "SEOチェックで閉じる",
-      detail: "H1・FAQ・出典の有無を計算して通す",
+      label: "SERPを閉じる",
+      detail: "H1一致・FAQ・内部リンクで1位を固定",
       ms: 400,
       cells: [
         { id: "c9", label: "FAQ", state: "lit" },
         { id: "c10", label: "内部リンク", state: "lit" },
-        { id: "c11", label: "出典", state: "lit" },
+        { id: "c11", label: "H1一致", state: "lit" },
       ],
     },
   ];

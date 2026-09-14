@@ -3,6 +3,7 @@ import { AgentCrewStrip, LiveOpsFeed } from "@/components/agent-crew";
 import { HackWedge, SerpHackMap } from "@/components/hack-wedge";
 import { HoneycombPreview } from "@/components/honeycomb";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { HACK } from "@/lib/hack";
 import { pains } from "@/lib/pains";
 import { SITE } from "@/lib/site";
 
@@ -14,11 +15,6 @@ export default function Home() {
     url: SITE.url,
     description: SITE.description,
     inLanguage: "ja-JP",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${SITE.url}/kizu?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   };
 
   return (
@@ -35,7 +31,7 @@ export default function Home() {
         <main className="relative z-10 flex flex-1 flex-col">
           <section className="scratch-panel relative mx-auto flex min-h-[calc(100vh-5.5rem)] w-full max-w-6xl flex-col justify-end px-5 pb-16 pt-10 sm:px-10 sm:pb-24">
             <p className="rise text-xs uppercase tracking-[0.35em] text-honey">
-              Bee-powered Pain SERP hack
+              Steal the Pain SERP
             </p>
             <h1 className="rise rise-delay-1 mt-5 font-[family-name:var(--font-display)] text-[clamp(3.4rem,14vw,8.5rem)] leading-[0.92] tracking-tight">
               <span className="scar-underline">{SITE.name}</span>
@@ -43,23 +39,54 @@ export default function Home() {
             <p className="rise rise-delay-2 mt-8 max-w-xl text-lg leading-relaxed text-paper-dim sm:text-xl">
               {SITE.tagline}
               <span className="mt-3 block text-base text-paper/80 sm:text-lg">
-                業務改善しない。コンテンツ全般もやらない。痛い検索語だけを取る。
+                業務ツールじゃない。コンテンツ工場でもない。
+                人が一番弱い瞬間の検索1位を、ミツバチで占領する。
               </span>
             </p>
             <div className="rise rise-delay-3 mt-10 flex flex-col gap-3 sm:flex-row">
               <Link href="/ops" className="cta">
-                ミツバチを出動
+                SERPを占領しにいく
               </Link>
-              <Link href="#hack" className="cta-ghost">
-                何をハックするか
+              <Link href="#novelty" className="cta-ghost">
+                新規性はどこ？
               </Link>
             </div>
           </section>
 
           <section
-            id="hack"
+            id="novelty"
             className="border-t border-line px-5 py-20 sm:px-10"
           >
+            <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-honey">
+                  Novelty
+                </p>
+                <h2 className="mt-4 font-[family-name:var(--font-display)] text-3xl leading-snug sm:text-4xl">
+                  新規性は「痛いSERPの占領マップ」
+                </h2>
+                <p className="mt-6 max-w-xl text-base leading-8 text-paper-dim sm:text-lg">
+                  {HACK.novelty}
+                </p>
+                <p className="mt-4 max-w-xl border-l-2 border-honey pl-4 text-base leading-8 text-paper">
+                  {HACK.thrill}
+                </p>
+              </div>
+              <div className="border border-honey/40 bg-honey/5 p-6">
+                <h3 className="font-[family-name:var(--font-display)] text-xl">
+                  顧客がワクワクする瞬間
+                </h3>
+                <ul className="mt-5 space-y-4 text-sm leading-7 text-paper-dim">
+                  <li>→ 競合のまとめ記事の上に、自分の枠が刺さる</li>
+                  <li>→ ハニカムが光るたびに「取った」が見える</li>
+                  <li>→ ミツバチが占領部隊として動いてる感がある</li>
+                  <li>→ 業務改善の進捗表ではなく、領地拡大のゲーム感</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="hack" className="border-t border-line px-5 py-20 sm:px-10">
             <div className="mx-auto max-w-6xl">
               <HackWedge />
               <div className="mt-12">
@@ -76,14 +103,15 @@ export default function Home() {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <h2 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl">
-                    ミツバチたちが、ハニカムを回す
+                    占領部隊のミツバチ
                   </h2>
                   <p className="mt-4 max-w-2xl text-paper-dim">
-                    痛い検索語の蜜を運び、煮詰め、良さげなセルだけ光らせる。キャッチーに見せつつ、やってることは Pain SERP ハックそのもの。
+                    ミツが偵察、ハニが一般論を落とし、コムが1位枠を閉じる。
+                    Cuteなのは入口。やってることはSERPの略奪。
                   </p>
                 </div>
                 <Link href="/ops" className="text-sm text-honey hover:underline">
-                  ハニカムを見る →
+                  占領室へ →
                 </Link>
               </div>
               <div className="mt-10">
@@ -94,50 +122,23 @@ export default function Home() {
                 <div className="flex flex-col gap-6">
                   <div>
                     <h3 className="mb-3 text-xs tracking-[0.25em] text-paper-dim">
-                      LIVE BEE LOG
+                      LIVE RAID
                     </h3>
                     <LiveOpsFeed />
                   </div>
-                  <div className="flex flex-col justify-between border border-honey/30 p-6">
-                    <div>
-                      <h3 className="font-[family-name:var(--font-display)] text-2xl">
-                        光ったセルだけ残す
-                      </h3>
-                      <p className="mt-4 text-sm leading-7 text-paper-dim">
-                        なぜ今 / 先に痛い事実 / 分岐点 / 今夜の一手。ハニカムの外には出ない。可愛いのに、捨てる範囲は厳しい。
-                      </p>
-                    </div>
-                    <Link href="/ops" className="cta mt-8 w-fit">
-                      ミツバチを出動させる
+                  <div className="border border-honey/30 p-6">
+                    <h3 className="font-[family-name:var(--font-display)] text-2xl">
+                      光 = 占領
+                    </h3>
+                    <p className="mt-4 text-sm leading-7 text-paper-dim">
+                      ハニカムの光ったセルが、取るべき痛い検索枠。
+                      進捗管理ではなく、領地の可視化。
+                    </p>
+                    <Link href="/ops" className="cta mt-8 inline-flex">
+                      いま占領しにいく
                     </Link>
                   </div>
                 </div>
-              </div>
-            </div>
-          </section>
-
-          <section id="how" className="border-t border-line px-5 py-20 sm:px-10">
-            <div className="mx-auto max-w-6xl">
-              <h2 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl">
-                取るページの型（これ以外は作らない）
-              </h2>
-              <p className="mt-4 max-w-2xl text-paper-dim">
-                1クエリ = 1きずあと。量産してもSEOが崩れないのは、骨格を変えないから。
-              </p>
-              <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                {[
-                  ["なぜ今", "この語で検索する瞬間の心理"],
-                  ["先に痛い事実", "原体験の塊を薄めた観察"],
-                  ["分岐点", "前に戻れたら変えられた選択"],
-                  ["次の一手", "今夜やることだけ"],
-                ].map(([title, body]) => (
-                  <div key={title} className="border-t border-scar/50 pt-4">
-                    <h3 className="font-[family-name:var(--font-display)] text-xl">
-                      {title}
-                    </h3>
-                    <p className="mt-3 text-sm leading-7 text-paper-dim">{body}</p>
-                  </div>
-                ))}
               </div>
             </div>
           </section>
@@ -146,10 +147,10 @@ export default function Home() {
             <div className="mx-auto max-w-6xl">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <h2 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl">
-                  いま奪いにいってるクエリ
+                  すでに狙い始めている枠
                 </h2>
-                <Link href="/kizu" className="text-sm text-scar hover:underline">
-                  索引を見る →
+                <Link href="/kizu" className="text-sm text-honey hover:underline">
+                  占領一覧 →
                 </Link>
               </div>
               <ul className="mt-10 divide-y divide-line border-y border-line">
@@ -160,7 +161,9 @@ export default function Home() {
                       className="pain-link flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:justify-between"
                     >
                       <span className="text-lg sm:text-xl">{pain.query}</span>
-                      <span className="text-sm text-paper-dim">{pain.category}</span>
+                      <span className="text-sm text-paper-dim">
+                        {pain.category}
+                      </span>
                     </Link>
                   </li>
                 ))}
