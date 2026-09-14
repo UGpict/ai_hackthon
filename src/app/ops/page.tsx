@@ -10,7 +10,7 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: "ハニカム・ハック室",
   description:
-    "ミツ・ハニ・コムが痛い検索語の蜜をハニカムへ運び、良さげなセルだけ光らせる。Cuteに見せて、中身はPain SERPハック。",
+    "仕事ログから顧客の痛み言葉を抽出し、人が採用したセルだけをハニカムで光らせる。Cuteな顔、厳しい拒否ルール。",
   alternates: {
     canonical: `${SITE.url}/ops`,
   },
@@ -22,14 +22,14 @@ export default function OpsPage() {
       <SiteHeader />
       <main className="relative z-10 mx-auto w-full max-w-6xl flex-1 px-5 py-12 sm:px-10">
         <p className="text-xs uppercase tracking-[0.3em] text-honey">
-          Bee hack console
+          Work-log → pain SERP
         </p>
         <h1 className="mt-4 font-[family-name:var(--font-display)] text-4xl sm:text-5xl">
           ハニカム・ハック室
         </h1>
         <p className="mt-4 max-w-2xl text-paper-dim leading-relaxed">
           {HACK.oneLiner}
-          ミツバチがアイデアをセルに運び、光ったものだけが残る。可愛い顔して、捨てる基準は厳しい。
+          原料はキーワード想像ではなく、自分の仕事ログ。拒否はスライドではなくコード。
         </p>
 
         <section className="mt-10">
@@ -38,7 +38,7 @@ export default function OpsPage() {
 
         <section className="mt-12">
           <h2 className="mb-5 font-[family-name:var(--font-display)] text-2xl">
-            出動メンバー
+            出動メンバー（進捗の顔）
           </h2>
           <AgentCrewStrip />
           <ul className="mt-6 grid gap-3 text-sm text-paper-dim sm:grid-cols-3">
@@ -52,13 +52,13 @@ export default function OpsPage() {
 
         <section className="mt-16 border-t border-line pt-12">
           <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl">
-            痛い検索語の蜜を、ハニカムへ
+            仕事ログから、痛み言葉を抜く
           </h2>
           <p className="mt-3 max-w-2xl text-paper-dim">
-            入力した語だけを運ぶ。光ったセルが、きずあと下書きになる。
+            貼る → 規則で抽出 → 人が採用 → 光ったセルだけ下書き。手打ちキーワードは本体ではない。
           </p>
           <div className="mt-8">
-            <AgentRunner initialQuery="転職して後悔した" />
+            <AgentRunner />
           </div>
         </section>
       </main>

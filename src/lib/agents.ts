@@ -82,6 +82,8 @@ export type ScarDraft = {
   next: string[];
   also: string[];
   seoNotes: string[];
+  /** Provenance: work-log lines that justified this draft */
+  sources: { phrase: string; sourceLine: string }[];
 };
 
 export function initialHoneycomb(query: string): HoneyCell[] {
@@ -108,57 +110,62 @@ export function initialHoneycomb(query: string): HoneyCell[] {
   }));
 }
 
-/** Deterministic local bee pipeline — nectar in, good cells light up. */
-export function buildAgentRun(query: string): {
+/** Deterministic local bee pipeline — work-log nectar in, approved cells light up. */
+export function buildAgentRun(
+  query: string,
+  approved: { phrase: string; sourceLine: string }[] = [],
+): {
   steps: AgentStep[];
   draft: ScarDraft;
   highlightIds: string[];
 } {
-  const q = query.trim() || "転職して後悔した";
+  const q = query.trim() || approved[0]?.phrase || "転職して後悔した";
   const slug = slugify(q);
+  const extras = approved.slice(0, 4);
 
   const steps: AgentStep[] = [
     {
       agentId: "mitsu",
-      label: "蜜を探しに飛ぶ",
-      detail: `「${q}」の検索意図を蜜として拾う`,
-      ms: 450,
+      label: "仕事ログから蜜を拾う",
+      detail: `採用された「${q}」をハニカムへ搬入`,
+      ms: 350,
       cells: [
         { id: "c0", label: q, state: "incoming" },
-        { id: "c1", label: `${q} サイン`, state: "incoming" },
-        { id: "c2", label: `${q} 対処`, state: "incoming" },
+        ...extras.slice(1, 3).map((e, i) => ({
+          id: `c${i + 1}`,
+          label: e.phrase.slice(0, 18),
+          state: "incoming" as const,
+        })),
       ],
     },
     {
       agentId: "mitsu",
-      label: "ハニカムへ運ぶ",
-      detail: "関連検索とPAAをセルに流し込む",
-      ms: 500,
+      label: "出典付きでセルに載せる",
+      detail: "出所のない蜜は運ばない",
+      ms: 400,
       cells: [
         { id: "c0", state: "candidate" },
         { id: "c1", state: "candidate" },
         { id: "c2", state: "candidate" },
-        { id: "c3", label: "深夜帯の揺れ", state: "incoming" },
-        { id: "c4", label: "共起クラスタ", state: "incoming" },
+        { id: "c3", label: extras[3]?.phrase.slice(0, 18) ?? "関連の痛み", state: "incoming" },
       ],
     },
     {
       agentId: "hani",
-      label: "ノイズを落とす",
-      detail: "一般論・精神論のセルを暗くする",
-      ms: 550,
+      label: "拒否ルールで落とす",
+      detail: "一般論・比較・事典系はコードで dim",
+      ms: 450,
       cells: [
         { id: "c5", label: "一般論", state: "dim" },
-        { id: "c6", label: "精神論", state: "dim" },
+        { id: "c6", label: "比較検討", state: "dim" },
         { id: "c3", state: "candidate" },
-        { id: "c4", state: "candidate" },
       ],
     },
     {
       agentId: "hani",
-      label: "蜜を煮詰める",
-      detail: "先に痛い事実と分岐点に濃縮",
-      ms: 550,
+      label: "事実に煮詰める",
+      detail: "精神論を捨て、分岐と今夜の一手だけ残す",
+      ms: 450,
       cells: [
         { id: "c7", label: "今夜の一手", state: "candidate" },
         { id: "c8", label: "分岐点", state: "candidate" },
@@ -167,9 +174,9 @@ export function buildAgentRun(query: string): {
     },
     {
       agentId: "comu",
-      label: "良さげなセルを光らせる",
-      detail: "勝ち筋の入口だけをハイライト",
-      ms: 500,
+      label: "人が採用したセルだけ光らせる",
+      detail: "自動全採用はしない。承認済みが lit",
+      ms: 400,
       cells: [
         { id: "c0", state: "lit" },
         { id: "c7", state: "lit" },
@@ -179,20 +186,20 @@ export function buildAgentRun(query: string): {
     },
     {
       agentId: "comu",
-      label: "SEOで封じる",
-      detail: "H1・FAQ・内部リンクで光るセルを通す",
-      ms: 450,
+      label: "SEOチェックで閉じる",
+      detail: "H1・FAQ・出典の有無を計算して通す",
+      ms: 400,
       cells: [
         { id: "c9", label: "FAQ", state: "lit" },
         { id: "c10", label: "内部リンク", state: "lit" },
-        { id: "c11", label: "H1一致", state: "lit" },
+        { id: "c11", label: "出典", state: "lit" },
       ],
     },
   ];
 
   return {
     steps,
-    draft: craftDraft(q, slug),
+    draft: craftDraft(q, slug, approved),
     highlightIds: ["c0", "c1", "c7", "c8", "c9", "c10", "c11"],
   };
 }
@@ -209,8 +216,16 @@ function slugify(input: string): string {
   );
 }
 
-function craftDraft(query: string, slug: string): ScarDraft {
+function craftDraft(
+  query: string,
+  slug: string,
+  approved: { phrase: string; sourceLine: string }[] = [],
+): ScarDraft {
   const also = [`${query} 対処`, `${query} サイン`, `${query} 次にやること`];
+  const sources =
+    approved.length > 0
+      ? approved.slice(0, 5)
+      : [{ phrase: query, sourceLine: "（手打ち。仕事ログ出典なし）" }];
 
   return {
     query,
@@ -240,6 +255,7 @@ function craftDraft(query: string, slug: string): ScarDraft {
       "関連きずあとへの内部リンクを最低2本",
       "title: 「検索語｜先に痛い事実」形式でクリック意図を明確化",
     ],
+    sources,
   };
 }
 
