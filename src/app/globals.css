@@ -356,24 +356,6 @@ a {
   color: var(--paper);
 }
 
-.hex-lit {
-  background: linear-gradient(
-    160deg,
-    color-mix(in oklab, var(--honey-bright) 85%, white),
-    var(--honey)
-  );
-  box-shadow:
-    0 0 18px var(--honey-glow),
-    0 0 36px rgba(255, 176, 32, 0.25);
-  transform: scale(1.04);
-  animation: honey-glow 1.8s ease-in-out infinite;
-}
-
-.hex-lit .hex-label {
-  color: #1a1004;
-  font-weight: 700;
-}
-
 .hex-dim {
   background: rgba(232, 228, 220, 0.04);
   opacity: 0.28;
