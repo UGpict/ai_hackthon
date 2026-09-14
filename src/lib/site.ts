@@ -2,7 +2,7 @@ export const SITE = {
   name: "きずあと",
   nameEn: "Kizuato",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://kizuato.app",
-  tagline: "痛い検索語の蜜を、ハニカムで光らせる",
+  tagline: "仕事ログの痛み言葉を、Pain SERPで光らせる",
   description:
-    "きずあとは業務改善ではない。ミツバチ型エージェントが痛い検索語の蜜をハニカムへ運び、良さげなセルだけ光らせて Pain SERP をハックする。",
+    "きずあとは業務改善ツールではない。商談・問い合わせログから顧客の痛み言葉を抜き、人が採用したセルだけを検索結果へ刺すSEOハックだ。",
 } as const;
