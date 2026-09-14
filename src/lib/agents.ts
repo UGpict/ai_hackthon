@@ -1,4 +1,4 @@
-export type AgentId = "saguri" | "kezuri" | "toji";
+export type AgentId = "mitsu" | "hani" | "comu";
 
 export type AgentProfile = {
   id: AgentId;
@@ -12,34 +12,34 @@ export type AgentProfile = {
 
 export const agents: AgentProfile[] = [
   {
-    id: "saguri",
-    name: "サグリ",
-    role: "Intent Scout",
-    job: "痛い検索語と検索意図を掘る",
+    id: "mitsu",
+    name: "ミツ",
+    role: "Nectar Scout",
+    job: "痛い検索語の蜜を集めてくる",
     workingForYou:
-      "SERPの深夜帯クエリを拾い、原体験が固まりかけている入口を見つける",
+      "SERPの深夜帯から“いま痛い”クエリを蜜として運ぶ",
     color: "#5ec8ff",
-    portrait: "/agents/saguri.png",
+    portrait: "/agents/mitsu.png",
   },
   {
-    id: "kezuri",
-    name: "ケズリ",
-    role: "Scar Carver",
-    job: "原体験の塊を薄い事実に削る",
+    id: "hani",
+    name: "ハニ",
+    role: "Honey Carver",
+    job: "集めた蜜を濃い事実に煮詰める",
     workingForYou:
-      "精神論を捨て、分岐点と今夜の一手だけが残るまで文章を削る",
-    color: "#ff4d2e",
-    portrait: "/agents/kezuri.png",
+      "原体験の塊を削って、分岐点と今夜の一手だけ残す",
+    color: "#ffb020",
+    portrait: "/agents/hani.png",
   },
   {
-    id: "toji",
-    name: "トジ",
-    role: "Rank Closer",
-    job: "FAQ・内部リンク・索引で閉じる",
+    id: "comu",
+    name: "コム",
+    role: "Comb Closer",
+    job: "良さげなセルを光らせてSEOで閉じる",
     workingForYou:
-      "検索で勝ち切る形に縫い、関連する傷どうしをつなぐ",
-    color: "#c9f27a",
-    portrait: "/agents/toji.png",
+      "FAQ・内部リンク・H1一致で、光るセルを検索に通す",
+    color: "#ffe08a",
+    portrait: "/agents/comu.png",
   },
 ];
 
@@ -54,6 +54,22 @@ export type AgentStep = {
   label: string;
   detail: string;
   ms: number;
+  /** Honeycomb cell updates during this step */
+  cells?: HoneyCellUpdate[];
+};
+
+export type HoneyCellState = "empty" | "incoming" | "candidate" | "lit" | "dim";
+
+export type HoneyCell = {
+  id: string;
+  label: string;
+  state: HoneyCellState;
+};
+
+export type HoneyCellUpdate = {
+  id: string;
+  label?: string;
+  state: HoneyCellState;
 };
 
 export type ScarDraft = {
@@ -68,73 +84,133 @@ export type ScarDraft = {
   seoNotes: string[];
 };
 
-/** Deterministic local agent pipeline — visualizes crew working without external LLM. */
+export function initialHoneycomb(query: string): HoneyCell[] {
+  const q = query.trim() || "転職して後悔した";
+  const seeds = [
+    q,
+    `${q} サイン`,
+    `${q} 対処`,
+    "関連検索A",
+    "関連検索B",
+    "一般論ノイズ",
+    "精神論",
+    "今夜の一手",
+    "分岐点",
+    "FAQ案",
+    "内部リンク",
+    "H1一致",
+  ];
+
+  return seeds.map((label, i) => ({
+    id: `c${i}`,
+    label: i === 0 ? label : "···",
+    state: "empty" as const,
+  }));
+}
+
+/** Deterministic local bee pipeline — nectar in, good cells light up. */
 export function buildAgentRun(query: string): {
   steps: AgentStep[];
   draft: ScarDraft;
+  highlightIds: string[];
 } {
   const q = query.trim() || "転職して後悔した";
   const slug = slugify(q);
 
   const steps: AgentStep[] = [
     {
-      agentId: "saguri",
-      label: "検索意図を分解",
-      detail: `「${q}」の裏にある“いま痛い理由”を切り出す`,
+      agentId: "mitsu",
+      label: "蜜を探しに飛ぶ",
+      detail: `「${q}」の検索意図を蜜として拾う`,
       ms: 450,
+      cells: [
+        { id: "c0", label: q, state: "incoming" },
+        { id: "c1", label: `${q} サイン`, state: "incoming" },
+        { id: "c2", label: `${q} 対処`, state: "incoming" },
+      ],
     },
     {
-      agentId: "saguri",
-      label: "共起クエリを拾う",
-      detail: "People Also Ask / 関連検索から入口語を3つ確保",
+      agentId: "mitsu",
+      label: "ハニカムへ運ぶ",
+      detail: "関連検索とPAAをセルに流し込む",
       ms: 500,
+      cells: [
+        { id: "c0", state: "candidate" },
+        { id: "c1", state: "candidate" },
+        { id: "c2", state: "candidate" },
+        { id: "c3", label: "深夜帯の揺れ", state: "incoming" },
+        { id: "c4", label: "共起クラスタ", state: "incoming" },
+      ],
     },
     {
-      agentId: "kezuri",
-      label: "原体験を削る",
-      detail: "感情の塊を、先に痛い事実4行に圧縮",
-      ms: 650,
+      agentId: "hani",
+      label: "ノイズを落とす",
+      detail: "一般論・精神論のセルを暗くする",
+      ms: 550,
+      cells: [
+        { id: "c5", label: "一般論", state: "dim" },
+        { id: "c6", label: "精神論", state: "dim" },
+        { id: "c3", state: "candidate" },
+        { id: "c4", state: "candidate" },
+      ],
     },
     {
-      agentId: "kezuri",
-      label: "分岐点を残す",
-      detail: "戻りたかった選択だけを3本に残す",
+      agentId: "hani",
+      label: "蜜を煮詰める",
+      detail: "先に痛い事実と分岐点に濃縮",
+      ms: 550,
+      cells: [
+        { id: "c7", label: "今夜の一手", state: "candidate" },
+        { id: "c8", label: "分岐点", state: "candidate" },
+        { id: "c0", state: "candidate" },
+      ],
+    },
+    {
+      agentId: "comu",
+      label: "良さげなセルを光らせる",
+      detail: "勝ち筋の入口だけをハイライト",
+      ms: 500,
+      cells: [
+        { id: "c0", state: "lit" },
+        { id: "c7", state: "lit" },
+        { id: "c8", state: "lit" },
+        { id: "c1", state: "lit" },
+      ],
+    },
+    {
+      agentId: "comu",
+      label: "SEOで封じる",
+      detail: "H1・FAQ・内部リンクで光るセルを通す",
       ms: 450,
-    },
-    {
-      agentId: "toji",
-      label: "今夜の一手を固定",
-      detail: "検索直後に動ける行動を3つに縫う",
-      ms: 400,
-    },
-    {
-      agentId: "toji",
-      label: "SEOで閉じる",
-      detail: "H1一致・FAQ候補・内部リンク案を添える",
-      ms: 500,
+      cells: [
+        { id: "c9", label: "FAQ", state: "lit" },
+        { id: "c10", label: "内部リンク", state: "lit" },
+        { id: "c11", label: "H1一致", state: "lit" },
+      ],
     },
   ];
 
-  const draft = craftDraft(q, slug);
-  return { steps, draft };
+  return {
+    steps,
+    draft: craftDraft(q, slug),
+    highlightIds: ["c0", "c1", "c7", "c8", "c9", "c10", "c11"],
+  };
 }
 
 function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^\p{L}\p{N}-]+/gu, "")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 48) || "pain-query";
+  return (
+    input
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\p{L}\p{N}-]+/gu, "")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 48) || "pain-query"
+  );
 }
 
 function craftDraft(query: string, slug: string): ScarDraft {
-  const also = [
-    `${query} 対処`,
-    `${query} サイン`,
-    `${query} 次にやること`,
-  ];
+  const also = [`${query} 対処`, `${query} サイン`, `${query} 次にやること`];
 
   return {
     query,
@@ -174,42 +250,41 @@ export type LiveActivity = {
   ago: string;
 };
 
-/** Demo feed: always-on sense that the crew is working for you. */
 export const liveFeed: LiveActivity[] = [
   {
     id: "1",
-    agentId: "saguri",
-    text: "「副業 バレた」周辺の関連検索を再スキャン",
+    agentId: "mitsu",
+    text: "「副業 バレた」の蜜をハニカムへ搬入中",
     ago: "38秒前",
   },
   {
     id: "2",
-    agentId: "kezuri",
-    text: "資金ショート頁の『先に痛い事実』を1行削って鋭利化",
+    agentId: "hani",
+    text: "資金ショートのセルを煮詰めて1行だけ残した",
     ago: "2分前",
   },
   {
     id: "3",
-    agentId: "toji",
-    text: "転職後悔 → 退職後不安 の内部リンクを縫い直し",
+    agentId: "comu",
+    text: "転職後悔→退職後不安のセルをつないで光らせた",
     ago: "4分前",
   },
   {
     id: "4",
-    agentId: "saguri",
-    text: "深夜帯の『婚活 疲れ』クエリ上昇を検知",
+    agentId: "mitsu",
+    text: "深夜帯『婚活 疲れ』の蜜が濃くなってきた",
     ago: "7分前",
   },
   {
     id: "5",
-    agentId: "toji",
-    text: "パワハラ証拠ページのFAQスキーマを検証",
+    agentId: "comu",
+    text: "パワハラ証拠セルのFAQを縫い直し",
     ago: "11分前",
   },
   {
     id: "6",
-    agentId: "kezuri",
-    text: "案件切れ頁の『今夜の一手』を行動可能な粒度に再圧縮",
+    agentId: "hani",
+    text: "案件切れの『今夜の一手』を食べやすい粒度に圧縮",
     ago: "16分前",
   },
 ];

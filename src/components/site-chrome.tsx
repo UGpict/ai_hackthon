@@ -14,8 +14,8 @@ export function SiteHeader() {
         <Link href="/kizu" className="transition-colors hover:text-scar">
           索引
         </Link>
-        <Link href="/ops" className="transition-colors hover:text-scar">
-          ハック室
+        <Link href="/ops" className="transition-colors hover:text-honey">
+          ハニカム
         </Link>
         <Link
           href="/#hack"
@@ -39,8 +39,8 @@ export function SiteFooter() {
           <p className="mt-1 max-w-md leading-relaxed">{SITE.tagline}</p>
         </div>
         <div className="flex gap-4">
-          <Link href="/ops" className="hover:text-scar">
-            ハック室
+          <Link href="/ops" className="hover:text-honey">
+            ハニカム
           </Link>
           <p>© {new Date().getFullYear()} {SITE.nameEn}</p>
         </div>

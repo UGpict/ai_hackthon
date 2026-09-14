@@ -7,6 +7,9 @@
   --paper-dim: #c9c3b6;
   --scar: #ff4d2e;
   --scar-deep: #c4311a;
+  --honey: #ffb020;
+  --honey-bright: #ffe08a;
+  --honey-glow: rgba(255, 176, 32, 0.35);
   --line: rgba(232, 228, 220, 0.14);
   --glow: rgba(255, 77, 46, 0.18);
   --background: var(--ink);
@@ -22,6 +25,8 @@
   --color-paper-dim: var(--paper-dim);
   --color-scar: var(--scar);
   --color-scar-deep: var(--scar-deep);
+  --color-honey: var(--honey);
+  --color-honey-bright: var(--honey-bright);
   --color-line: var(--line);
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
@@ -81,7 +86,7 @@ a {
 
 .hero-wash {
   background:
-    radial-gradient(1200px 700px at 70% -10%, var(--glow), transparent 55%),
+    radial-gradient(1200px 700px at 70% -10%, var(--honey-glow), transparent 55%),
     radial-gradient(900px 500px at 10% 20%, rgba(232, 228, 220, 0.06), transparent 50%),
     linear-gradient(165deg, #10141c 0%, var(--ink) 45%, #07080b 100%);
 }
@@ -166,16 +171,16 @@ a {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  background: var(--scar);
-  color: #140804;
+  background: linear-gradient(180deg, var(--honey-bright), var(--honey));
+  color: #1a1004;
   font-weight: 700;
   letter-spacing: 0.02em;
   padding: 0.95rem 1.4rem;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: filter 0.2s ease, transform 0.2s ease;
 }
 
 .cta:hover {
-  background: #ff6a50;
+  filter: brightness(1.06);
   transform: translateY(-1px);
 }
 
@@ -218,7 +223,7 @@ a {
   background: linear-gradient(
     90deg,
     transparent,
-    color-mix(in oklab, var(--scar) 55%, white),
+    color-mix(in oklab, var(--honey) 70%, white),
     transparent
   );
   transform: scaleX(0.2);
@@ -234,5 +239,184 @@ a {
   50% {
     transform: scaleX(1);
     opacity: 1;
+  }
+}
+
+/* —— Honeycomb —— */
+.honeycomb {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.honeycomb-row {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.honeycomb-row-offset {
+  margin-left: 0;
+  transform: translateX(1.15rem);
+}
+
+@media (min-width: 640px) {
+  .honeycomb-row-offset {
+    transform: translateX(1.55rem);
+  }
+}
+
+.hex {
+  width: 4.4rem;
+  height: 3.8rem;
+  clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%);
+  background: rgba(232, 228, 220, 0.06);
+  transition:
+    background 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.35s ease,
+    filter 0.35s ease;
+}
+
+@media (min-width: 640px) {
+  .hex {
+    width: 5.6rem;
+    height: 4.8rem;
+  }
+}
+
+.hex-inner {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0.35rem;
+  text-align: center;
+}
+
+.hex-label {
+  font-size: 0.62rem;
+  line-height: 1.25;
+  color: var(--paper-dim);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+@media (min-width: 640px) {
+  .hex-label {
+    font-size: 0.72rem;
+  }
+}
+
+.hex-empty {
+  opacity: 0.35;
+}
+
+.hex-incoming {
+  background: color-mix(in oklab, var(--honey) 22%, #1a1408);
+  animation: nectar-in 0.7s ease both;
+}
+
+.hex-incoming .hex-label {
+  color: var(--honey-bright);
+}
+
+.hex-candidate {
+  background: color-mix(in oklab, var(--honey) 35%, #1a1408);
+}
+
+.hex-candidate .hex-label {
+  color: var(--paper);
+}
+
+.hex-lit {
+  background: linear-gradient(
+    160deg,
+    color-mix(in oklab, var(--honey-bright) 85%, white),
+    var(--honey)
+  );
+  box-shadow:
+    0 0 18px var(--honey-glow),
+    0 0 36px rgba(255, 176, 32, 0.25);
+  transform: scale(1.04);
+  animation: honey-glow 1.8s ease-in-out infinite;
+}
+
+.hex-lit .hex-label {
+  color: #1a1004;
+  font-weight: 700;
+}
+
+.hex-dim {
+  background: rgba(232, 228, 220, 0.04);
+  opacity: 0.28;
+  filter: grayscale(1);
+}
+
+@keyframes nectar-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes honey-glow {
+  0%,
+  100% {
+    filter: brightness(1);
+    box-shadow:
+      0 0 14px var(--honey-glow),
+      0 0 28px rgba(255, 176, 32, 0.2);
+  }
+  50% {
+    filter: brightness(1.12);
+    box-shadow:
+      0 0 22px var(--honey-glow),
+      0 0 44px rgba(255, 224, 138, 0.35);
+  }
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%);
+}
+
+.legend-incoming {
+  background: color-mix(in oklab, var(--honey) 50%, #1a1408);
+}
+
+.legend-candidate {
+  background: color-mix(in oklab, var(--honey) 70%, #1a1408);
+}
+
+.legend-lit {
+  background: var(--honey-bright);
+  box-shadow: 0 0 8px var(--honey-glow);
+}
+
+.legend-dim {
+  background: rgba(232, 228, 220, 0.2);
+}
+
+.bee-buzz {
+  animation: bee-buzz 2.4s ease-in-out infinite;
+}
+
+@keyframes bee-buzz {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
   }
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AgentCrewStrip, LiveOpsFeed } from "@/components/agent-crew";
 import { HackWedge, SerpHackMap } from "@/components/hack-wedge";
+import { HoneycombPreview } from "@/components/honeycomb";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { pains } from "@/lib/pains";
 import { SITE } from "@/lib/site";
@@ -33,8 +34,8 @@ export default function Home() {
 
         <main className="relative z-10 flex flex-1 flex-col">
           <section className="scratch-panel relative mx-auto flex min-h-[calc(100vh-5.5rem)] w-full max-w-6xl flex-col justify-end px-5 pb-16 pt-10 sm:px-10 sm:pb-24">
-            <p className="rise text-xs uppercase tracking-[0.35em] text-scar">
-              Hack one SERP niche
+            <p className="rise text-xs uppercase tracking-[0.35em] text-honey">
+              Bee-powered Pain SERP hack
             </p>
             <h1 className="rise rise-delay-1 mt-5 font-[family-name:var(--font-display)] text-[clamp(3.4rem,14vw,8.5rem)] leading-[0.92] tracking-tight">
               <span className="scar-underline">{SITE.name}</span>
@@ -47,7 +48,7 @@ export default function Home() {
             </p>
             <div className="rise rise-delay-3 mt-10 flex flex-col gap-3 sm:flex-row">
               <Link href="/ops" className="cta">
-                ハックを回す
+                ミツバチを出動
               </Link>
               <Link href="#hack" className="cta-ghost">
                 何をハックするか
@@ -75,38 +76,41 @@ export default function Home() {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <h2 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl">
-                    ハックを回す三人
+                    ミツバチたちが、ハニカムを回す
                   </h2>
                   <p className="mt-4 max-w-2xl text-paper-dim">
-                    強みは「痛いにだけ特化したSEO運用」そのもの。キャラは、自分たちのためにSERPを削り続けてる感を可視化するための装置。
+                    痛い検索語の蜜を運び、煮詰め、良さげなセルだけ光らせる。キャッチーに見せつつ、やってることは Pain SERP ハックそのもの。
                   </p>
                 </div>
-                <Link href="/ops" className="text-sm text-scar hover:underline">
-                  ハック室へ →
+                <Link href="/ops" className="text-sm text-honey hover:underline">
+                  ハニカムを見る →
                 </Link>
               </div>
               <div className="mt-10">
                 <AgentCrewStrip />
               </div>
               <div className="mt-10 grid gap-8 lg:grid-cols-2">
-                <div>
-                  <h3 className="mb-3 text-xs tracking-[0.25em] text-paper-dim">
-                    LIVE HACK LOG
-                  </h3>
-                  <LiveOpsFeed />
-                </div>
-                <div className="flex flex-col justify-between border border-line p-6">
+                <HoneycombPreview />
+                <div className="flex flex-col gap-6">
                   <div>
-                    <h3 className="font-[family-name:var(--font-display)] text-2xl">
-                      型を固定したから速い
+                    <h3 className="mb-3 text-xs tracking-[0.25em] text-paper-dim">
+                      LIVE BEE LOG
                     </h3>
-                    <p className="mt-4 text-sm leading-7 text-paper-dim">
-                      なぜ今 / 先に痛い事実 / 分岐点 / 今夜の一手。この外に出ない。汎用ライターAIに勝てる理由は、捨てた範囲の広さ。
-                    </p>
+                    <LiveOpsFeed />
                   </div>
-                  <Link href="/ops" className="cta mt-8 w-fit">
-                    痛い語でハックを起動
-                  </Link>
+                  <div className="flex flex-col justify-between border border-honey/30 p-6">
+                    <div>
+                      <h3 className="font-[family-name:var(--font-display)] text-2xl">
+                        光ったセルだけ残す
+                      </h3>
+                      <p className="mt-4 text-sm leading-7 text-paper-dim">
+                        なぜ今 / 先に痛い事実 / 分岐点 / 今夜の一手。ハニカムの外には出ない。可愛いのに、捨てる範囲は厳しい。
+                      </p>
+                    </div>
+                    <Link href="/ops" className="cta mt-8 w-fit">
+                      ミツバチを出動させる
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

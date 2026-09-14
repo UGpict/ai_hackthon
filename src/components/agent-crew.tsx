@@ -11,20 +11,20 @@ import {
 } from "@/lib/agents";
 
 const rotatingLines: Record<AgentId, string[]> = {
-  saguri: [
-    "痛いクエリの上昇を監視中",
-    "関連検索のクラスタを切ってる",
-    "深夜帯の検索意図を拾ってる",
+  mitsu: [
+    "痛いクエリの蜜を探してる",
+    "関連検索の蜜を運んでる",
+    "深夜帯の蜜の濃さを測ってる",
   ],
-  kezuri: [
-    "原体験の塊を削ってる",
-    "精神論を捨てて事実だけ残してる",
-    "分岐点を3本に圧縮中",
+  hani: [
+    "ハニカムで蜜を煮詰めてる",
+    "ノイズのセルを暗くしてる",
+    "分岐点だけ残してる",
   ],
-  toji: [
-    "FAQと内部リンクを縫ってる",
-    "H1とtitleの一致を確認中",
-    "索引どうしを閉じてる",
+  comu: [
+    "良さげなセルを光らせてる",
+    "FAQとリンクで縫ってる",
+    "H1一致を確認中",
   ],
 };
 
@@ -47,7 +47,7 @@ export function AgentCrewStrip() {
             className="agent-card relative overflow-hidden border border-line bg-ink/50 p-4"
           >
             <div className="flex items-start gap-3">
-              <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-line">
+              <div className="bee-buzz relative h-16 w-16 shrink-0 overflow-hidden border border-honey/30">
                 <Image
                   src={agent.portrait}
                   alt={agent.name}
@@ -87,11 +87,7 @@ export function AgentCrewStrip() {
   );
 }
 
-export function LiveOpsFeed({
-  extra,
-}: {
-  extra?: LiveActivity[];
-}) {
+export function LiveOpsFeed({ extra }: { extra?: LiveActivity[] }) {
   const items = [...(extra ?? []), ...liveFeed].slice(0, 8);
 
   return (
@@ -105,7 +101,7 @@ export function LiveOpsFeed({
               alt=""
               width={36}
               height={36}
-              className="mt-0.5 h-9 w-9 border border-line object-cover"
+              className="mt-0.5 h-9 w-9 border border-honey/20 object-cover"
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between gap-3">

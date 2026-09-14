@@ -6,10 +6,13 @@ import { useEffect, useRef, useState } from "react";
 import {
   buildAgentRun,
   getAgent,
+  initialHoneycomb,
   type AgentStep,
+  type HoneyCell,
   type ScarDraft,
 } from "@/lib/agents";
 import { LiveOpsFeed } from "@/components/agent-crew";
+import { HoneycombBoard } from "@/components/honeycomb";
 
 type Phase = "idle" | "running" | "done";
 
@@ -31,12 +34,32 @@ function sleep(ms: number, signal: AbortSignal) {
   });
 }
 
+function applyCellUpdates(
+  cells: HoneyCell[],
+  updates: NonNullable<AgentStep["cells"]>,
+): HoneyCell[] {
+  const map = new Map(cells.map((c) => [c.id, { ...c }]));
+  for (const u of updates) {
+    const prev = map.get(u.id);
+    if (!prev) continue;
+    map.set(u.id, {
+      ...prev,
+      label: u.label ?? prev.label,
+      state: u.state,
+    });
+  }
+  return cells.map((c) => map.get(c.id) ?? c);
+}
+
 export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
   const [query, setQuery] = useState(initialQuery);
   const [phase, setPhase] = useState<Phase>("idle");
   const [activeStep, setActiveStep] = useState<AgentStep | null>(null);
   const [log, setLog] = useState<AgentStep[]>([]);
   const [draft, setDraft] = useState<ScarDraft | null>(null);
+  const [cells, setCells] = useState<HoneyCell[]>(() =>
+    initialHoneycomb(initialQuery || "転職して後悔した"),
+  );
   const runRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -55,11 +78,15 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
     setLog([]);
     setDraft(null);
     setActiveStep(null);
+    setCells(initialHoneycomb(q));
     setPhase("running");
 
     try {
       for (const step of steps) {
         setActiveStep(step);
+        if (step.cells?.length) {
+          setCells((prev) => applyCellUpdates(prev, step.cells!));
+        }
         await sleep(step.ms, controller.signal);
         setLog((prev) => [...prev, step]);
       }
@@ -103,7 +130,7 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
               }
             }}
             placeholder="例）転職して後悔した"
-            className="w-full border border-line bg-ink/60 px-4 py-3 text-paper outline-none placeholder:text-paper-dim/60 focus:border-scar"
+            className="w-full border border-line bg-ink/60 px-4 py-3 text-paper outline-none placeholder:text-paper-dim/60 focus:border-honey"
             disabled={phase === "running"}
             aria-label="痛い検索語"
           />
@@ -113,19 +140,23 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
             className="cta shrink-0 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={phase === "running" || !query.trim()}
           >
-            {phase === "running" ? "ハック中…" : "この語のSERPをハック"}
+            {phase === "running" ? "ミツバチ出動中…" : "ハニカムへ運ばせる"}
           </button>
         </div>
 
         <p className="mt-3 text-sm text-paper-dim">
-          サグリが意図を拾い、ケズリが削り、トジがSEOで閉じる。入力した痛い検索語のSERPだけをハックする。
+          ミツが蜜を集め、ハニが煮詰め、コムが良さげなセルを光らせる。痛い検索語だけがハニカムに残る。
         </p>
 
-        <div className="mt-8 min-h-[12rem] border border-line bg-ink-soft/40 p-5">
+        <div className="mt-6">
+          <HoneycombBoard cells={cells} />
+        </div>
+
+        <div className="mt-8 min-h-[8rem] border border-line bg-ink-soft/40 p-5">
           {phase === "idle" ? (
             <p className="text-paper-dim leading-7">
-              検索語を入れて起動すると、3体が順番に手を動かす。
-              成果物は「きずあと」ページの下書きになる。
+              検索語を入れると、ミツバチたちがハニカムにアイデアを搬入する。
+              光ったセルだけが、きずあと下書きになる。
             </p>
           ) : null}
 
@@ -137,16 +168,16 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
                   alt={activeAgent.name}
                   width={72}
                   height={72}
-                  className="h-[72px] w-[72px] border border-line object-cover"
+                  className="bee-buzz h-[72px] w-[72px] border border-honey/30 object-cover"
                 />
-                <span className="agent-pulse absolute -right-1 -top-1 h-3 w-3 rounded-full bg-scar" />
+                <span className="agent-pulse absolute -right-1 -top-1 h-3 w-3 rounded-full bg-honey" />
               </div>
               <div>
                 <p
                   className="text-sm font-medium"
                   style={{ color: activeAgent.color }}
                 >
-                  {activeAgent.name} が作業中
+                  {activeAgent.name} が働いてる
                 </p>
                 <p className="mt-1 font-[family-name:var(--font-display)] text-xl">
                   {activeStep.label}
@@ -160,8 +191,8 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
 
           {phase === "done" && draft ? (
             <div>
-              <p className="text-xs uppercase tracking-[0.25em] text-scar">
-                Draft ready
+              <p className="text-xs uppercase tracking-[0.25em] text-honey">
+                Cells lit · draft ready
               </p>
               <h3 className="mt-2 font-[family-name:var(--font-display)] text-2xl">
                 {draft.query}
@@ -187,7 +218,7 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
                 {draft.scars.map((s) => (
                   <li
                     key={s}
-                    className="border-l-2 border-scar/70 pl-4 leading-7 text-paper/90"
+                    className="border-l-2 border-honey/80 pl-4 leading-7 text-paper/90"
                   >
                     {s}
                   </li>
@@ -201,7 +232,7 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
               <ol className="mt-3 space-y-3">
                 {draft.forks.map((f, i) => (
                   <li key={f} className="flex gap-3 leading-7">
-                    <span className="text-scar">
+                    <span className="text-honey">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span>{f}</span>
@@ -216,7 +247,7 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
               <ol className="mt-3 space-y-3">
                 {draft.next.map((n, i) => (
                   <li key={n} className="flex gap-3 leading-7">
-                    <span className="text-scar">{i + 1}.</span>
+                    <span className="text-honey">{i + 1}.</span>
                     <span>{n}</span>
                   </li>
                 ))}
@@ -224,7 +255,7 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
             </section>
             <section>
               <h4 className="text-sm tracking-[0.2em] text-paper-dim">
-                トジの SEO メモ
+                コムの SEO メモ
               </h4>
               <ul className="mt-3 space-y-2 text-sm text-paper-dim">
                 {draft.seoNotes.map((note) => (
@@ -232,7 +263,7 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
                 ))}
               </ul>
               <Link href="/kizu" className="cta mt-6 inline-flex">
-                既存のきずあと索引へ
+                光ってる索引へ
               </Link>
             </section>
           </article>
@@ -242,9 +273,9 @@ export function AgentRunner({ initialQuery = "" }: { initialQuery?: string }) {
       <div>
         <div className="mb-3 flex items-end justify-between">
           <h3 className="font-[family-name:var(--font-display)] text-xl">
-            いま動いてるログ
+            ミツバチの作業ログ
           </h3>
-          <span className="text-xs text-paper-dim">for you</span>
+          <span className="text-xs text-honey">for you</span>
         </div>
         <LiveOpsFeed extra={feedExtra} />
       </div>
