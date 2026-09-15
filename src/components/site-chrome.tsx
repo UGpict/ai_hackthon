@@ -15,7 +15,7 @@ export function SiteHeader() {
           索引
         </Link>
         <Link href="/ops" className="transition-colors hover:text-honey">
-          占領室
+          奪取室
         </Link>
         <Link
           href="/#hack"
@@ -40,7 +40,7 @@ export function SiteFooter() {
         </div>
         <div className="flex gap-4">
           <Link href="/ops" className="hover:text-honey">
-            占領室
+            奪取室
           </Link>
           <p>© {new Date().getFullYear()} {SITE.nameEn}</p>
         </div>

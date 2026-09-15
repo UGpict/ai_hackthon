@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test src/lib/pain-extract.test.ts"
+    "test": "node --experimental-strip-types --test src/lib/serp-raid.test.ts"
   },
   "dependencies": {
     "next": "16.3.5",

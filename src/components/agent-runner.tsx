@@ -14,6 +14,7 @@ import {
 import { LiveOpsFeed } from "@/components/agent-crew";
 import { HoneycombBoard } from "@/components/honeycomb";
 import { SerpRaidBoard } from "@/components/serp-raid";
+import type { ClaimRank } from "@/lib/serp-raid";
 
 type Phase = "idle" | "raiding" | "occupied";
 
@@ -52,8 +53,12 @@ function applyCellUpdates(
   return cells.map((c) => map.get(c.id) ?? c);
 }
 
-/** Pain-query SERP raid: bees claim the slot, honeycomb lights, draft locks #1. */
-export function AgentRunner({ initialQuery = "転職して後悔した" }: { initialQuery?: string }) {
+/** Core thrill: watch bees climb a Pain SERP until #1 is yours. */
+export function AgentRunner({
+  initialQuery = "転職して後悔した",
+}: {
+  initialQuery?: string;
+}) {
   const [query, setQuery] = useState(initialQuery);
   const [phase, setPhase] = useState<Phase>("idle");
   const [activeStep, setActiveStep] = useState<AgentStep | null>(null);
@@ -62,7 +67,8 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
   const [cells, setCells] = useState<HoneyCell[]>(() =>
     initialHoneycomb(initialQuery),
   );
-  const [occupiedCount, setOccupiedCount] = useState(0);
+  const [claimRank, setClaimRank] = useState<ClaimRank>(null);
+  const [stolenCount, setStolenCount] = useState(0);
   const runRef = useRef<AbortController | null>(null);
 
   useEffect(() => () => runRef.current?.abort(), []);
@@ -79,6 +85,7 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
     setLog([]);
     setDraft(null);
     setActiveStep(null);
+    setClaimRank(null);
 
     let board = initialHoneycomb(q);
     setCells(board);
@@ -87,6 +94,7 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
     try {
       for (const step of steps) {
         setActiveStep(step);
+        if (step.claimRank) setClaimRank(step.claimRank);
         if (step.cells?.length) {
           board = applyCellUpdates(board, step.cells);
           setCells(board.map((c) => ({ ...c })));
@@ -104,20 +112,21 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
         return cell;
       });
       setCells(board.map((c) => ({ ...c })));
+      setClaimRank(1);
       setActiveStep(null);
       setDraft(nextDraft);
-      setOccupiedCount((n) => n + 1);
+      setStolenCount((n) => n + 1);
       setPhase("occupied");
     } catch {
       if (!controller.signal.aborted) {
         setPhase("idle");
         setActiveStep(null);
+        setClaimRank(null);
       }
     }
   }
 
   const occupied = phase === "occupied";
-  const claiming = phase === "raiding";
   const activeAgent = activeStep ? getAgent(activeStep.agentId) : null;
 
   const feedExtra =
@@ -148,7 +157,7 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
           placeholder="例）副業がバレた"
           className="w-full border border-line bg-ink/60 px-4 py-3 text-paper outline-none placeholder:text-paper-dim/60 focus:border-honey"
           disabled={phase === "raiding"}
-          aria-label="占領したい痛い検索語"
+          aria-label="奪いたい痛い検索語"
         />
         <button
           type="button"
@@ -156,27 +165,30 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
           className="cta shrink-0 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={phase === "raiding" || !query.trim()}
         >
-          {phase === "raiding" ? "占領中…" : "このSERPを占領する"}
+          {phase === "raiding"
+            ? "奪取中…"
+            : occupied
+              ? "もう一度奪う"
+              : "このSERPを奪う"}
         </button>
       </div>
 
-      <p className="text-sm text-paper-dim">
-        新規性はここ：痛い検索語を入れると、競合の一般論SERPの上を取りにいく。
-        ハニカムの光＝占領した枠。ミツバチは占領部隊。
-        {occupiedCount > 0 ? (
-          <span className="ml-2 text-honey">占領数 {occupiedCount}</span>
+      <p className="text-sm leading-7 text-paper-dim">
+        左が競合のPain SERP。右が領地ハニカム。
+        ミツ→ハニ→コムの順で #3→#2→#1。光った瞬間が商品。
+        {stolenCount > 0 ? (
+          <span className="ml-2 text-honey">奪取数 {stolenCount}</span>
         ) : null}
       </p>
 
       <div className="grid gap-8 lg:grid-cols-2">
         <div>
           <h3 className="mb-3 font-[family-name:var(--font-display)] text-xl">
-            SERPレイド
+            Google · 奪取前→後
           </h3>
           <SerpRaidBoard
             query={query.trim() || initialQuery}
-            occupied={occupied || claiming}
-            pulsing={occupied || claiming}
+            claimRank={claimRank}
           />
         </div>
         <div>
@@ -185,12 +197,19 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
           </h3>
           <HoneycombBoard
             cells={cells}
-            title={occupied ? "光ったセル＝占領した入口" : "ハニカム待機中"}
+            title={
+              claimRank === 1
+                ? "光ったセル＝奪った入口"
+                : claimRank
+                  ? `押し上げ中 · いま #${claimRank}`
+                  : "ハニカム待機中"
+            }
           />
           <div className="mt-4 min-h-[6.5rem] border border-line bg-ink-soft/40 p-4">
             {phase === "idle" ? (
               <p className="text-sm leading-7 text-paper-dim">
-                痛い検索語を入れて占領を開始。ミツが蜜を運び、ハニがノイズを落とし、コムが1位枠を閉じる。
+                痛い検索語を入れて奪取を開始。競合のまとめ記事がまだ #1
+                の状態から始まる。
               </p>
             ) : null}
             {activeAgent && activeStep ? (
@@ -210,7 +229,7 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
                     className="text-sm font-medium"
                     style={{ color: activeAgent.color }}
                   >
-                    {activeAgent.name} が占領作業中
+                    {activeAgent.name} が奪取中
                   </p>
                   <p className="mt-1 font-[family-name:var(--font-display)] text-lg">
                     {activeStep.label}
@@ -222,8 +241,8 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
               </div>
             ) : null}
             {occupied && draft ? (
-              <p className="text-sm text-honey">
-                SERP #1 を仮押さえ · 下書きロック完了
+              <p className="text-sm font-medium text-honey">
+                SERP #1 奪取完了 · 占領ページをロック
               </p>
             ) : null}
           </div>
@@ -236,7 +255,7 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
             <article className="space-y-7 border border-honey/40 p-5 sm:p-7">
               <header>
                 <p className="text-xs uppercase tracking-[0.25em] text-honey">
-                  Occupying page
+                  Stolen · occupying page
                 </p>
                 <h3 className="mt-2 font-[family-name:var(--font-display)] text-2xl">
                   {draft.query}
@@ -278,12 +297,12 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
                 </ol>
               </section>
               <Link href="/kizu" className="cta inline-flex">
-                占領一覧（索引）へ
+                占領一覧へ
               </Link>
             </article>
           ) : (
             <div className="border border-dashed border-line p-8 text-sm leading-7 text-paper-dim">
-              占領が終わると、このSERPを取るためのきずあとページがここに出る。
+              #1 を奪ったあと、このSERPを固定するきずあとページがここに出る。
               ワクワクの本体は「一般論の上を取った」感覚。
             </div>
           )}
@@ -291,7 +310,7 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
         <div>
           <div className="mb-3 flex items-end justify-between">
             <h3 className="font-[family-name:var(--font-display)] text-xl">
-              占領ログ
+              奪取ログ
             </h3>
             <span className="text-xs text-honey">raid feed</span>
           </div>

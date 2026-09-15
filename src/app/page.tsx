@@ -45,7 +45,7 @@ export default function Home() {
             </p>
             <div className="rise rise-delay-3 mt-10 flex flex-col gap-3 sm:flex-row">
               <Link href="/ops" className="cta">
-                SERPを占領しにいく
+                痛いSERPを奪いにいく
               </Link>
               <Link href="#novelty" className="cta-ghost">
                 新規性はどこ？
@@ -63,7 +63,7 @@ export default function Home() {
                   Novelty
                 </p>
                 <h2 className="mt-4 font-[family-name:var(--font-display)] text-3xl leading-snug sm:text-4xl">
-                  新規性は「痛いSERPの占領マップ」
+                  新規性は「占領マップ」そのもの
                 </h2>
                 <p className="mt-6 max-w-xl text-base leading-8 text-paper-dim sm:text-lg">
                   {HACK.novelty}
@@ -77,10 +77,10 @@ export default function Home() {
                   顧客がワクワクする瞬間
                 </h3>
                 <ul className="mt-5 space-y-4 text-sm leading-7 text-paper-dim">
-                  <li>→ 競合のまとめ記事の上に、自分の枠が刺さる</li>
-                  <li>→ ハニカムが光るたびに「取った」が見える</li>
-                  <li>→ ミツバチが占領部隊として動いてる感がある</li>
-                  <li>→ 業務改善の進捗表ではなく、領地拡大のゲーム感</li>
+                  <li>→ まとめ記事がまだ#1の画面から始まる</li>
+                  <li>→ ミツバチが#3→#2→#1と押し上げる</li>
+                  <li>→ ハニカムが光る＝Googleの枠を取った</li>
+                  <li>→ SEOレポートではなく、領地略奪の快感</li>
                 </ul>
               </div>
             </div>
@@ -106,12 +106,12 @@ export default function Home() {
                     占領部隊のミツバチ
                   </h2>
                   <p className="mt-4 max-w-2xl text-paper-dim">
-                    ミツが偵察、ハニが一般論を落とし、コムが1位枠を閉じる。
+                    ミツが#3に差し込み、ハニが#2へ押し上げ、コムが#1を閉じる。
                     Cuteなのは入口。やってることはSERPの略奪。
                   </p>
                 </div>
                 <Link href="/ops" className="text-sm text-honey hover:underline">
-                  占領室へ →
+                  奪取室へ →
                 </Link>
               </div>
               <div className="mt-10">
@@ -135,7 +135,7 @@ export default function Home() {
                       進捗管理ではなく、領地の可視化。
                     </p>
                     <Link href="/ops" className="cta mt-8 inline-flex">
-                      いま占領しにいく
+                      いま奪いにいく
                     </Link>
                   </div>
                 </div>

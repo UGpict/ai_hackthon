@@ -14,30 +14,27 @@ export const agents: AgentProfile[] = [
   {
     id: "mitsu",
     name: "ミツ",
-    role: "Nectar Scout",
-    job: "痛い検索語の蜜を集めてくる",
-    workingForYou:
-      "SERPの深夜帯から“いま痛い”クエリを蜜として運ぶ",
+    role: "SERP Scout",
+    job: "痛い検索枠を偵察してハニカムへ運ぶ",
+    workingForYou: "深夜帯の痛いクエリをロックオンし、競合の位置を地図化する",
     color: "#5ec8ff",
     portrait: "/agents/mitsu.png",
   },
   {
     id: "hani",
     name: "ハニ",
-    role: "Honey Carver",
-    job: "集めた蜜を濃い事実に煮詰める",
-    workingForYou:
-      "原体験の塊を削って、分岐点と今夜の一手だけ残す",
+    role: "Noise Carver",
+    job: "一般論を落とし、占領用の中身だけ残す",
+    workingForYou: "まとめ記事・精神論を dim にして、分岐と今夜の一手に濃縮する",
     color: "#ffb020",
     portrait: "/agents/hani.png",
   },
   {
     id: "comu",
     name: "コム",
-    role: "Comb Closer",
-    job: "良さげなセルを光らせてSEOで閉じる",
-    workingForYou:
-      "FAQ・内部リンク・H1一致で、光るセルを検索に通す",
+    role: "Rank Closer",
+    job: "勝ちセルを光らせて #1 を閉じる",
+    workingForYou: "H1一致・FAQ・内部リンクで、光ったセルを検索1位に固定する",
     color: "#ffe08a",
     portrait: "/agents/comu.png",
   },
@@ -54,7 +51,8 @@ export type AgentStep = {
   label: string;
   detail: string;
   ms: number;
-  /** Honeycomb cell updates during this step */
+  /** Climb the fake SERP: inject at #3 → #2 → steal #1 */
+  claimRank?: 3 | 2 | 1;
   cells?: HoneyCellUpdate[];
 };
 
@@ -82,8 +80,6 @@ export type ScarDraft = {
   next: string[];
   also: string[];
   seoNotes: string[];
-  /** Provenance: work-log lines that justified this draft */
-  sources: { phrase: string; sourceLine: string }[];
 };
 
 export function initialHoneycomb(query: string): HoneyCell[] {
@@ -110,24 +106,21 @@ export function initialHoneycomb(query: string): HoneyCell[] {
   }));
 }
 
-/** Deterministic local bee pipeline — work-log nectar in, approved cells light up. */
-export function buildAgentRun(
-  query: string,
-  approved: { phrase: string; sourceLine: string }[] = [],
-): {
+/** Pain SERP raid pipeline — bees climb rivals and light the honeycomb. */
+export function buildAgentRun(query: string): {
   steps: AgentStep[];
   draft: ScarDraft;
   highlightIds: string[];
 } {
-  const q = query.trim() || approved[0]?.phrase || "転職して後悔した";
+  const q = query.trim() || "転職して後悔した";
   const slug = slugify(q);
 
   const steps: AgentStep[] = [
     {
       agentId: "mitsu",
       label: "痛いSERPを偵察",
-      detail: `「${q}」の検索意図を蜜としてロックオン`,
-      ms: 350,
+      detail: `「${q}」——まとめ記事と掲示板がまだ1位を持っている`,
+      ms: 420,
       cells: [
         { id: "c0", label: q, state: "incoming" },
         { id: "c1", label: `${q.slice(0, 10)} サイン`, state: "incoming" },
@@ -136,13 +129,12 @@ export function buildAgentRun(
     },
     {
       agentId: "mitsu",
-      label: "競合枠をハニカムへ運ぶ",
-      detail: "まとめ記事・掲示板・一般論の位置をセル化",
-      ms: 280,
+      label: "#3に差し込む",
+      detail: "きずあと枠をSERPに注入。まだ下だが、地図に乗った",
+      ms: 480,
+      claimRank: 3,
       cells: [
         { id: "c0", state: "candidate" },
-        { id: "c1", state: "candidate" },
-        { id: "c2", state: "candidate" },
         { id: "c3", label: "まとめ記事枠", state: "incoming" },
         { id: "c4", label: "掲示板枠", state: "incoming" },
       ],
@@ -151,7 +143,8 @@ export function buildAgentRun(
       agentId: "hani",
       label: "一般論を落とす",
       detail: "比較・事典・精神論は dim。痛い入口だけ残す",
-      ms: 320,
+      ms: 420,
+      claimRank: 3,
       cells: [
         { id: "c5", label: "一般論", state: "dim" },
         { id: "c6", label: "比較検討", state: "dim" },
@@ -161,9 +154,10 @@ export function buildAgentRun(
     },
     {
       agentId: "hani",
-      label: "占領用の中身を煮詰める",
-      detail: "先に痛い事実と今夜の一手に濃縮",
-      ms: 320,
+      label: "#2へ押し上げ",
+      detail: "今夜の一手と分岐点で、掲示板の上を取る",
+      ms: 520,
+      claimRank: 2,
       cells: [
         { id: "c7", label: "今夜の一手", state: "candidate" },
         { id: "c8", label: "分岐点", state: "candidate" },
@@ -172,9 +166,10 @@ export function buildAgentRun(
     },
     {
       agentId: "comu",
-      label: "#1枠を光らせる",
-      detail: "勝ち筋のセルだけ lit。ここが占領ポイント",
-      ms: 280,
+      label: "#1を奪う",
+      detail: "勝ち筋のセルを lit。まとめ記事の上を占領",
+      ms: 560,
+      claimRank: 1,
       cells: [
         { id: "c0", state: "lit" },
         { id: "c7", state: "lit" },
@@ -186,7 +181,8 @@ export function buildAgentRun(
       agentId: "comu",
       label: "SERPを閉じる",
       detail: "H1一致・FAQ・内部リンクで1位を固定",
-      ms: 280,
+      ms: 400,
+      claimRank: 1,
       cells: [
         { id: "c9", label: "FAQ", state: "lit" },
         { id: "c10", label: "内部リンク", state: "lit" },
@@ -197,7 +193,7 @@ export function buildAgentRun(
 
   return {
     steps,
-    draft: craftDraft(q, slug, approved),
+    draft: craftDraft(q, slug),
     highlightIds: ["c0", "c1", "c7", "c8", "c9", "c10", "c11"],
   };
 }
@@ -214,16 +210,8 @@ function slugify(input: string): string {
   );
 }
 
-function craftDraft(
-  query: string,
-  slug: string,
-  approved: { phrase: string; sourceLine: string }[] = [],
-): ScarDraft {
+function craftDraft(query: string, slug: string): ScarDraft {
   const also = [`${query} 対処`, `${query} サイン`, `${query} 次にやること`];
-  const sources =
-    approved.length > 0
-      ? approved.slice(0, 5)
-      : [{ phrase: query, sourceLine: "（手打ち。仕事ログ出典なし）" }];
 
   return {
     query,
@@ -253,7 +241,6 @@ function craftDraft(
       "関連きずあとへの内部リンクを最低2本",
       "title: 「検索語｜先に痛い事実」形式でクリック意図を明確化",
     ],
-    sources,
   };
 }
 
@@ -268,37 +255,37 @@ export const liveFeed: LiveActivity[] = [
   {
     id: "1",
     agentId: "mitsu",
-    text: "「副業 バレた」の蜜をハニカムへ搬入中",
+    text: "「副業 バレた」のSERPを偵察——掲示板がまだ#1",
     ago: "38秒前",
   },
   {
     id: "2",
     agentId: "hani",
-    text: "資金ショートのセルを煮詰めて1行だけ残した",
+    text: "資金ショート枠から一般論を落とし、#2まで押し上げた",
     ago: "2分前",
   },
   {
     id: "3",
     agentId: "comu",
-    text: "転職後悔→退職後不安のセルをつないで光らせた",
+    text: "転職後悔のセルを lit ——まとめ記事の上を占領",
     ago: "4分前",
   },
   {
     id: "4",
     agentId: "mitsu",
-    text: "深夜帯『婚活 疲れ』の蜜が濃くなってきた",
+    text: "深夜帯『婚活 疲れ』をハニカムに注入",
     ago: "7分前",
   },
   {
     id: "5",
     agentId: "comu",
-    text: "パワハラ証拠セルのFAQを縫い直し",
+    text: "パワハラ証拠クエリで #1 を閉じた",
     ago: "11分前",
   },
   {
     id: "6",
     agentId: "hani",
-    text: "案件切れの『今夜の一手』を食べやすい粒度に圧縮",
+    text: "案件切れの『今夜の一手』で掲示板を追い抜いた",
     ago: "16分前",
   },
 ];

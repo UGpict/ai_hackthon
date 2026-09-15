@@ -5,16 +5,18 @@ export type SerpRival = {
   kind: "generic" | "forum" | "media";
 };
 
+/** How far the bees have climbed the Pain SERP. null = still rivals only. */
+export type ClaimRank = null | 3 | 2 | 1;
+
 export type SerpRaidPlan = {
   query: string;
   intent: string;
   yourTitle: string;
   yourSnippet: string;
   rivals: SerpRival[];
-  occupiedLabel: string;
 };
 
-/** Deterministic fake SERP for the raid demo — the thrill of taking slot #1. */
+/** Deterministic fake SERP — thrill is watching #1 get stolen. */
 export function buildSerpRaid(query: string): SerpRaidPlan {
   const q = query.trim() || "転職して後悔した";
 
@@ -43,6 +45,5 @@ export function buildSerpRaid(query: string): SerpRaidPlan {
         snippet: "準備・比較・心構え。痛い瞬間の検索意図とはズレている…",
       },
     ],
-    occupiedLabel: `「${q}」のSERPを占領`,
   };
 }
