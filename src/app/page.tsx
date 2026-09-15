@@ -1,5 +1,9 @@
 import Link from "next/link";
+import { AgentCrewStrip, LiveOpsFeed } from "@/components/agent-crew";
+import { HackWedge, SerpHackMap } from "@/components/hack-wedge";
+import { HoneycombPreview } from "@/components/honeycomb";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { HACK } from "@/lib/hack";
 import { pains } from "@/lib/pains";
 import { SITE } from "@/lib/site";
 
@@ -11,11 +15,6 @@ export default function Home() {
     url: SITE.url,
     description: SITE.description,
     inLanguage: "ja-JP",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${SITE.url}/kizu?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   };
 
   return (
@@ -31,8 +30,8 @@ export default function Home() {
 
         <main className="relative z-10 flex flex-1 flex-col">
           <section className="scratch-panel relative mx-auto flex min-h-[calc(100vh-5.5rem)] w-full max-w-6xl flex-col justify-end px-5 pb-16 pt-10 sm:px-10 sm:pb-24">
-            <p className="rise text-xs uppercase tracking-[0.35em] text-scar">
-              SEO for lived pain
+            <p className="rise text-xs uppercase tracking-[0.35em] text-honey">
+              Steal the Pain SERP
             </p>
             <h1 className="rise rise-delay-1 mt-5 font-[family-name:var(--font-display)] text-[clamp(3.4rem,14vw,8.5rem)] leading-[0.92] tracking-tight">
               <span className="scar-underline">{SITE.name}</span>
@@ -40,72 +39,106 @@ export default function Home() {
             <p className="rise rise-delay-2 mt-8 max-w-xl text-lg leading-relaxed text-paper-dim sm:text-xl">
               {SITE.tagline}
               <span className="mt-3 block text-base text-paper/80 sm:text-lg">
-                原体験の塊みたいな辛さを、自分が全部背負う前に薄める。
+                業務ツールじゃない。コンテンツ工場でもない。
+                人が一番弱い瞬間の検索1位を、ミツバチで占領する。
               </span>
             </p>
             <div className="rise rise-delay-3 mt-10 flex flex-col gap-3 sm:flex-row">
-              <Link href="/kizu" className="cta">
-                痛い検索語から入る
+              <Link href="/ops" className="cta">
+                痛いSERPを奪いにいく
               </Link>
-              <Link href="#thesis" className="cta-ghost">
-                なぜSEOなのか
+              <Link href="#novelty" className="cta-ghost">
+                新規性はどこ？
               </Link>
             </div>
           </section>
 
           <section
-            id="thesis"
+            id="novelty"
             className="border-t border-line px-5 py-20 sm:px-10"
           >
             <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.1fr_0.9fr]">
               <div>
-                <h2 className="font-[family-name:var(--font-display)] text-3xl leading-snug sm:text-4xl">
-                  人は、痛い瞬間にしか本気で検索しない。
+                <p className="text-xs uppercase tracking-[0.3em] text-honey">
+                  Novelty
+                </p>
+                <h2 className="mt-4 font-[family-name:var(--font-display)] text-3xl leading-snug sm:text-4xl">
+                  新規性は「占領マップ」そのもの
                 </h2>
                 <p className="mt-6 max-w-xl text-base leading-8 text-paper-dim sm:text-lg">
-                  きずあとは、その検索意図のど真ん中に「先に痛い事実」を置く。
-                  ブログでもSNSでもなく、原体験を圧縮したページを、検索結果の入口にする。
+                  {HACK.novelty}
+                </p>
+                <p className="mt-4 max-w-xl border-l-2 border-honey pl-4 text-base leading-8 text-paper">
+                  {HACK.thrill}
                 </p>
               </div>
-              <ol className="space-y-5 border-l border-line pl-6 text-sm leading-7 text-paper-dim sm:text-base">
-                <li>
-                  <span className="text-scar">01</span>{" "}
-                  深夜の検索語＝今まさに原体験が固まりかけている合図
-                </li>
-                <li>
-                  <span className="text-scar">02</span>{" "}
-                  そこで届くのは精神論ではなく、分岐点と次の一手
-                </li>
-                <li>
-                  <span className="text-scar">03</span>{" "}
-                  痛みのページを量産し、内部リンクで関連する傷をつなぐ
-                </li>
-              </ol>
+              <div className="border border-honey/40 bg-honey/5 p-6">
+                <h3 className="font-[family-name:var(--font-display)] text-xl">
+                  顧客がワクワクする瞬間
+                </h3>
+                <ul className="mt-5 space-y-4 text-sm leading-7 text-paper-dim">
+                  <li>→ まとめ記事がまだ#1の画面から始まる</li>
+                  <li>→ ミツバチが#3→#2→#1と押し上げる</li>
+                  <li>→ ハニカムが光る＝Googleの枠を取った</li>
+                  <li>→ SEOレポートではなく、領地略奪の快感</li>
+                </ul>
+              </div>
             </div>
           </section>
 
-          <section id="how" className="border-t border-line bg-ink-soft/40 px-5 py-20 sm:px-10">
+          <section id="hack" className="border-t border-line px-5 py-20 sm:px-10">
             <div className="mx-auto max-w-6xl">
-              <h2 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl">
-                1ページの型
-              </h2>
-              <p className="mt-4 max-w-2xl text-paper-dim">
-                すべてのきずあとは、同じ骨格で書く。SEOに強く、読んですぐ動ける。
-              </p>
-              <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                {[
-                  ["なぜ今", "この語で検索する瞬間の心理"],
-                  ["先に痛い事実", "原体験の塊を薄めた観察"],
-                  ["分岐点", "前に戻れたら変えられた選択"],
-                  ["次の一手", "今夜やることだけ"],
-                ].map(([title, body]) => (
-                  <div key={title} className="border-t border-scar/50 pt-4">
-                    <h3 className="font-[family-name:var(--font-display)] text-xl">
-                      {title}
+              <HackWedge />
+              <div className="mt-12">
+                <SerpHackMap />
+              </div>
+            </div>
+          </section>
+
+          <section
+            id="crew"
+            className="border-t border-line bg-ink-soft/40 px-5 py-20 sm:px-10"
+          >
+            <div className="mx-auto max-w-6xl">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl">
+                    占領部隊のミツバチ
+                  </h2>
+                  <p className="mt-4 max-w-2xl text-paper-dim">
+                    ミツが#3に差し込み、ハニが#2へ押し上げ、コムが#1を閉じる。
+                    Cuteなのは入口。やってることはSERPの略奪。
+                  </p>
+                </div>
+                <Link href="/ops" className="text-sm text-honey hover:underline">
+                  奪取室へ →
+                </Link>
+              </div>
+              <div className="mt-10">
+                <AgentCrewStrip />
+              </div>
+              <div className="mt-10 grid gap-8 lg:grid-cols-2">
+                <HoneycombPreview />
+                <div className="flex flex-col gap-6">
+                  <div>
+                    <h3 className="mb-3 text-xs tracking-[0.25em] text-paper-dim">
+                      LIVE RAID
                     </h3>
-                    <p className="mt-3 text-sm leading-7 text-paper-dim">{body}</p>
+                    <LiveOpsFeed />
                   </div>
-                ))}
+                  <div className="border border-honey/30 p-6">
+                    <h3 className="font-[family-name:var(--font-display)] text-2xl">
+                      光 = 占領
+                    </h3>
+                    <p className="mt-4 text-sm leading-7 text-paper-dim">
+                      ハニカムの光ったセルが、取るべき痛い検索枠。
+                      進捗管理ではなく、領地の可視化。
+                    </p>
+                    <Link href="/ops" className="cta mt-8 inline-flex">
+                      いま奪いにいく
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
@@ -114,10 +147,10 @@ export default function Home() {
             <div className="mx-auto max-w-6xl">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <h2 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl">
-                  いま索引している痛み
+                  すでに狙い始めている枠
                 </h2>
-                <Link href="/kizu" className="text-sm text-scar hover:underline">
-                  すべて見る →
+                <Link href="/kizu" className="text-sm text-honey hover:underline">
+                  占領一覧 →
                 </Link>
               </div>
               <ul className="mt-10 divide-y divide-line border-y border-line">
@@ -128,7 +161,9 @@ export default function Home() {
                       className="pain-link flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:justify-between"
                     >
                       <span className="text-lg sm:text-xl">{pain.query}</span>
-                      <span className="text-sm text-paper-dim">{pain.category}</span>
+                      <span className="text-sm text-paper-dim">
+                        {pain.category}
+                      </span>
                     </Link>
                   </li>
                 ))}

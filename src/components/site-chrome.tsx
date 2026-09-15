@@ -10,12 +10,18 @@ export function SiteHeader() {
       >
         {SITE.name}
       </Link>
-      <nav className="flex items-center gap-5 text-sm text-paper-dim">
+      <nav className="flex items-center gap-4 text-sm text-paper-dim sm:gap-5">
         <Link href="/kizu" className="transition-colors hover:text-scar">
-          きずあと一覧
+          索引
         </Link>
-        <Link href="/#how" className="hidden transition-colors hover:text-scar sm:inline">
-          仕組み
+        <Link href="/ops" className="transition-colors hover:text-honey">
+          奪取室
+        </Link>
+        <Link
+          href="/#hack"
+          className="hidden transition-colors hover:text-scar sm:inline"
+        >
+          強み
         </Link>
       </nav>
     </header>
@@ -32,7 +38,12 @@ export function SiteFooter() {
           </p>
           <p className="mt-1 max-w-md leading-relaxed">{SITE.tagline}</p>
         </div>
-        <p>© {new Date().getFullYear()} {SITE.nameEn}</p>
+        <div className="flex gap-4">
+          <Link href="/ops" className="hover:text-honey">
+            奪取室
+          </Link>
+          <p>© {new Date().getFullYear()} {SITE.nameEn}</p>
+        </div>
       </div>
     </footer>
   );

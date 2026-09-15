@@ -43,7 +43,7 @@ export default async function KizuIndexPage({
           きずあと一覧
         </h1>
         <p className="mt-4 max-w-2xl text-paper-dim leading-relaxed">
-          検索される痛みの語を、そのまま入口にする。ここは記事の目次ではなく、原体験の索引。
+          奪いにいってる痛い検索語の索引。ここは記事の目次ではなく、Pain SERP の戦場マップ。
         </p>
 
         <form className="mt-10 flex flex-col gap-3 sm:flex-row" action="/kizu" method="get">

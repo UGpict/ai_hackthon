@@ -18,6 +18,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.9,
     },
+    {
+      url: `${SITE.url}/ops`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
     ...pains.map((pain) => ({
       url: `${SITE.url}/kizu/${pain.slug}`,
       lastModified: now,
