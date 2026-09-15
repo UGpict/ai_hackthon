@@ -116,8 +116,8 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
     }
   }
 
-  const activeAgent = activeStep ? getAgent(activeStep.agentId) : null;
   const occupied = phase === "occupied";
+  const claiming = phase === "raiding";
 
   const feedExtra =
     phase !== "idle"
@@ -174,8 +174,8 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
           </h3>
           <SerpRaidBoard
             query={query.trim() || initialQuery}
-            occupied={occupied}
-            pulsing={occupied}
+            occupied={occupied || claiming}
+            pulsing={occupied || claiming}
           />
         </div>
         <div>

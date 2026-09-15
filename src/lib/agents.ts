@@ -138,7 +138,7 @@ export function buildAgentRun(
       agentId: "mitsu",
       label: "競合枠をハニカムへ運ぶ",
       detail: "まとめ記事・掲示板・一般論の位置をセル化",
-      ms: 400,
+      ms: 280,
       cells: [
         { id: "c0", state: "candidate" },
         { id: "c1", state: "candidate" },
@@ -151,7 +151,7 @@ export function buildAgentRun(
       agentId: "hani",
       label: "一般論を落とす",
       detail: "比較・事典・精神論は dim。痛い入口だけ残す",
-      ms: 450,
+      ms: 320,
       cells: [
         { id: "c5", label: "一般論", state: "dim" },
         { id: "c6", label: "比較検討", state: "dim" },
@@ -163,7 +163,7 @@ export function buildAgentRun(
       agentId: "hani",
       label: "占領用の中身を煮詰める",
       detail: "先に痛い事実と今夜の一手に濃縮",
-      ms: 450,
+      ms: 320,
       cells: [
         { id: "c7", label: "今夜の一手", state: "candidate" },
         { id: "c8", label: "分岐点", state: "candidate" },
@@ -174,7 +174,7 @@ export function buildAgentRun(
       agentId: "comu",
       label: "#1枠を光らせる",
       detail: "勝ち筋のセルだけ lit。ここが占領ポイント",
-      ms: 400,
+      ms: 280,
       cells: [
         { id: "c0", state: "lit" },
         { id: "c7", state: "lit" },
@@ -186,7 +186,7 @@ export function buildAgentRun(
       agentId: "comu",
       label: "SERPを閉じる",
       detail: "H1一致・FAQ・内部リンクで1位を固定",
-      ms: 400,
+      ms: 280,
       cells: [
         { id: "c9", label: "FAQ", state: "lit" },
         { id: "c10", label: "内部リンク", state: "lit" },

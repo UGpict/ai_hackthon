@@ -32,7 +32,7 @@ export function SerpRaidBoard({ query, occupied, pulsing }: Props) {
             occupied ? "text-honey" : "text-paper-dim"
           }`}
         >
-          {occupied ? "OCCUPIED" : "UNCLAIMED"}
+          {occupied ? "OCCUPIED / #1" : "UNCLAIMED"}
         </p>
       </div>
 
