@@ -118,11 +118,9 @@ export function AgentRunner({
       setStolenCount((n) => n + 1);
       setPhase("occupied");
     } catch {
-      if (!controller.signal.aborted) {
-        setPhase("idle");
-        setActiveStep(null);
-        setClaimRank(null);
-      }
+      setPhase("idle");
+      setActiveStep(null);
+      setClaimRank(null);
     }
   }
 

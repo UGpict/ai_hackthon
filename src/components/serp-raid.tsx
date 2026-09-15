@@ -30,6 +30,7 @@ export function SerpRaidBoard({ query, claimRank }: Props) {
   const yourRow =
     claimRank !== null ? (
       <li
+        key="kizuato-claim"
         className={`px-4 py-4 ${
           claimRank === 1
             ? "serp-claim-pulse bg-honey/20"
