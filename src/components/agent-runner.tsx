@@ -118,6 +118,7 @@ export function AgentRunner({ initialQuery = "転職して後悔した" }: { ini
 
   const occupied = phase === "occupied";
   const claiming = phase === "raiding";
+  const activeAgent = activeStep ? getAgent(activeStep.agentId) : null;
 
   const feedExtra =
     phase !== "idle"
